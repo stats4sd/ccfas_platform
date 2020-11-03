@@ -15,9 +15,9 @@ class CreateChangesTable extends Migration
     {
         Schema::create('changes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('effect_indicator_id');
-            $table->string('qualitative')->unique();
-            $table->string('quantitative')->unique();
+            $table->foreignId('link_effect_indicator_id')->constrained('_link_effects_indicators')->onDelete('cascade');
+            $table->string('qualitative')->nullable();
+            $table->string('quantitative')->nullable();
             $table->timestamps();
         });
     }

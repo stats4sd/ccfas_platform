@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSubactivitiesTable extends Migration
+class CreateIndicatorsStatusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateSubactivitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('subactivities', function (Blueprint $table) {
+        Schema::create('indicators_status', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('activity_id')->constrained('activities')->onDelete('cascade');
             $table->string('name')->unique();
             $table->timestamps();
         });
@@ -28,6 +27,6 @@ class CreateSubactivitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subactivities');
+        Schema::dropIfExists('indicators_status');
     }
 }

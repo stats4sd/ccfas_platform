@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -14,7 +15,8 @@ class CreateLinkCsaFrameworksElementsTable extends Migration
     {
         Schema::create('_link_csa_frameworks_elements', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->foreignId('csa_framework_id')->constrained('csa_frameworks')->onDelete('cascade');
+            $table->foreignId('element_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

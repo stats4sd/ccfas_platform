@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEnableEnvsTable extends Migration
+class CreateCountriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +13,7 @@ class CreateEnableEnvsTable extends Migration
      */
     public function up()
     {
-        Schema::create('enable_envs', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->timestamps();
@@ -26,6 +27,6 @@ class CreateEnableEnvsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('enable_envs');
+        Schema::dropIfExists('countries');
     }
 }

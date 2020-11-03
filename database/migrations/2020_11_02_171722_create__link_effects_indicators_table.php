@@ -15,9 +15,9 @@ class CreateLinkEffectsIndicatorsTable extends Migration
     {
         Schema::create('_link_effects_indicators', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('effect_id');
-            $table->unsignedBigInteger('indicator_id');
-            $table->unsignedBigInteger('level_attribution_id');
+            $table->foreignId('effect_id')->constrained()->onDelete('cascade');
+            $table->foreignId('indicator_id')->constrained()->onDelete('cascade');
+            $table->foreignId('level_attribution_id')->constrained('level_attributions')->onDelete('cascade');
             $table->timestamps();
         });
     }

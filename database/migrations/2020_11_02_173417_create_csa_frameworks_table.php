@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -15,7 +16,9 @@ class CreateCsaFrameworksTable extends Migration
         Schema::create('csa_frameworks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
+            $table->text('description');
             $table->timestamps();
+
         });
     }
 

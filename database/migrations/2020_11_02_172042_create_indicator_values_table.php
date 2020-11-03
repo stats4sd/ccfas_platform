@@ -15,7 +15,12 @@ class CreateIndicatorValuesTable extends Migration
     {
         Schema::create('indicator_values', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->foreignId('link_effect_indicator_id')->constrained('_link_effects_indicators')->onDelete('cascade');
+            $table->decimal('value');
+            $table->string('url_source')->nullable();
+            $table->string('file_source')->nullable();
+            $table->foreignId('indicator_status_id')->constrained('indicators_status')->onDelete('cascade');
+            $table->foreignId('disaggregation_id')->constrained('disaggregations')->onDelete('cascade');
             $table->timestamps();
         });
     }

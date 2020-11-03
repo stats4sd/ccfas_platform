@@ -15,7 +15,7 @@ class CreateEffectsTable extends Migration
     {
         Schema::create('effects', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->text('description')->unique();
+            $table->text('description');
             $table->timestamps();
         });
     }

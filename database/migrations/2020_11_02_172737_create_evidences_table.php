@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -14,7 +15,11 @@ class CreateEvidencesTable extends Migration
     {
         Schema::create('evidences', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->foreignId('effect_id')->constrained()->onDelete('cascade');
+            $table->text('description');
+            $table->json('files')->nullable();
+            $table->text('files_description')->nullable();
+            $table->string('urls')->nullable();
             $table->timestamps();
         });
     }

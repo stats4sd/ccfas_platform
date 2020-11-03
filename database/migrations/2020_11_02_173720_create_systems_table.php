@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOutputTable extends Migration
+class CreateSystemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +13,7 @@ class CreateOutputTable extends Migration
      */
     public function up()
     {
-        Schema::create('output', function (Blueprint $table) {
+        Schema::create('systems', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->timestamps();
@@ -26,6 +27,6 @@ class CreateOutputTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('output');
+        Schema::dropIfExists('systems');
     }
 }

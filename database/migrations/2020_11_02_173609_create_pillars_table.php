@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLevelAttributionsTable extends Migration
+class CreatePillarsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +13,7 @@ class CreateLevelAttributionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('level_attributions', function (Blueprint $table) {
+        Schema::create('pillars', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->timestamps();
@@ -26,6 +27,6 @@ class CreateLevelAttributionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('level_attributions');
+        Schema::dropIfExists('pillars');
     }
 }

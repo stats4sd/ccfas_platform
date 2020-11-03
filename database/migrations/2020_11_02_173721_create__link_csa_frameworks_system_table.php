@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -12,9 +13,10 @@ class CreateLinkCsaFrameworksSystemTable extends Migration
      */
     public function up()
     {
-        Schema::create('_link_csa_frameworks_system', function (Blueprint $table) {
+        Schema::create('_link_csa_frameworks_systems', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->foreignId('csa_framework_id')->constrained('csa_frameworks')->onDelete('cascade');
+            $table->foreignId('system_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ class CreateLinkCsaFrameworksSystemTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_link_csa_frameworks_system');
+        Schema::dropIfExists('_link_csa_frameworks_systems');
     }
 }

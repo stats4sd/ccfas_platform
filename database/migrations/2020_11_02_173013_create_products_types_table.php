@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDisaggregationsTable extends Migration
+class CreateProductsTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +13,7 @@ class CreateDisaggregationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('disaggregations', function (Blueprint $table) {
+        Schema::create('products_types', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->timestamps();
@@ -26,6 +27,6 @@ class CreateDisaggregationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('disaggregations');
+        Schema::dropIfExists('products_types');
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePillarsTable extends Migration
+class CreateActivitiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +13,9 @@ class CreatePillarsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pillars', function (Blueprint $table) {
+        Schema::create('activities', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->foreignId('output_id')->constrained()->onDelete('cascade');
             $table->string('name')->unique();
             $table->timestamps();
         });
@@ -26,6 +28,6 @@ class CreatePillarsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pillars');
+        Schema::dropIfExists('activities');
     }
 }
