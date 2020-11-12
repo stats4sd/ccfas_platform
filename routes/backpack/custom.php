@@ -17,4 +17,8 @@ Route::group([
     Route::crud('effect', 'EffectCrudController');
     Route::crud('action', 'ActionCrudController');
     Route::crud('indicator', 'IndicatorCrudController');
+    Route::crud('indicatorstatus', 'IndicatorStatusCrudController');
+    Route::crud('indicatorvalue', 'IndicatorValueCrudController');
+    Route::crud('team', 'TeamCrudController');
+    Route::crud('user', 'UserCrudController');
 }); // this should be the absolute last line of this file

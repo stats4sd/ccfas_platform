@@ -34,6 +34,10 @@ class Action extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function effects()
+    {
+        return $this->belongsToMany(Effect::class);
+    }
 
     /*
     |--------------------------------------------------------------------------
