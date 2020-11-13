@@ -7,3 +7,4 @@
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicatorvalue') }}'><i class='nav-icon la la-question'></i> IndicatorValues</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('team') }}'><i class='nav-icon la la-question'></i> Teams</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='nav-icon la la-question'></i> Users</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('evidence') }}'><i class='nav-icon la la-question'></i> Evidence</a></li>

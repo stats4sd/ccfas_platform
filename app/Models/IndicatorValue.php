@@ -36,7 +36,7 @@ class IndicatorValue extends Model
     */
     public function indicator_status()
     {
-        return $this->belongsTo('App\Models\IndicatorStatus');
+        return $this->hasMany('App\Models\IndicatorStatus', 'indicator_status_id');
     }
 
     /*

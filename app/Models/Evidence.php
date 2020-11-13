@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class Effect extends Model
+class Evidence extends Model
 {
     use CrudTrait;
 
@@ -15,7 +15,7 @@ class Effect extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'effects';
+    protected $table = 'evidences';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -34,19 +34,9 @@ class Effect extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function actions()
+    public function effect()
     {
-        return $this->belongsToMany(Action::class, '_link_effects_actions');
-    }
-
-    public function indicators()
-    {
-        return $this->belongsToMany(Indicator::class, '_link_effects_indicators');
-    }
-
-    public function evidence()
-    {
-        return $this->belongsTo(Evidence::class);
+        return $this->hasMany(Effect::class, 'effect_id');
     }
 
     /*

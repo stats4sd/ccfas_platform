@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Evidence;
+use App\Models\Indicator;
 use App\Http\Requests\EffectRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -15,9 +17,11 @@ class EffectCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -82,18 +86,7 @@ class EffectCrudController extends CrudController
                 'type'          => 'textarea'
 
             ],
-            [   // SelectMultiple = n-n relationship (with pivot table)
-                'label'     => "Select Indicators",
-                'type'      => 'select2_multiple',
-                'name'      => 'indicators', // the method that defines the relationship in your Model
-            
-                // optional
-                'entity'    => 'indicators', // the method that defines the relationship in your Model
-                'model'     => "App\Models\Indicator", // foreign key model
-                'attribute' => 'name', // foreign key attribute that is shown to user
-                'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
-            
-            ],  
+        
             [   // repeatable
                 'name'  => 'indicator_repeat',
                 'label' => 'This section collects information about indicators that measure the effect you have described. 
@@ -106,16 +99,19 @@ class EffectCrudController extends CrudController
                 'type'  => 'repeatable',
                 'fields' => [
                     [
-                        'name'    => 'ind_name',
-                        'type'    => 'text',
-                        'label'   => 'Indicator definition',
-        
+                        'type' => "relationship",
+                        'name' => 'indicators',
+                        'ajax' => true,
+                        'minimum_input_length' => 0,
+                        'inline_create' => [ 'entity' => 'indicator' ],
+                        'placeholder' => "Select a indicator",
+                      
                     ],
                     [
-                        'name'    => 'ind_definition',
-                        'type'    => 'text',
-                        'label'   => 'Indicator definition',
-        
+                        'name'    => 'ind_value',
+                        'type'    => 'number',
+                        'label'   => 'Indicator Value',
+                       
                     ],
                     [
                         'name'    => 'ind_url_source',
@@ -132,25 +128,28 @@ class EffectCrudController extends CrudController
                     ],
                     // [
                     //     'name'    => 'ind_status',
-                    //     'type'    => 'select',
-                    //     'label'   => 'Status',
-                    //     'entity'    => 'indicator_status', 
-                    //     'model'     => "App\Models\IndicatorStatus", // related model
-                    //     'attribute' => 'name', 
-                       
-                    // ],
-                    [
-                        'name'  => 'ind_now',
-                        'type'  => 'number',
-                        'label' => 'What is the value of the indicator now?',
-                       
-                    ],
+                    //     'type' => "relationship",
+                    //     'name' => 'indicators_status',
+                    //     'ajax' => true,
+                    //     'minimum_input_length' => 0,
+                    //     'inline_create' => [ 'entity' => 'indicator_status' ],
+                    //     'placeholder' => "Select a Status", 
+                    // ]
+                    
                 ],
             
                 // optional
                 'new_item_label'  => 'Add Indicator', // customize the text of the button
                 
             ],
+
+            [
+                'type' => "relationship",
+                'name' => 'evidence', // the method on your model that defines the relationship
+                'ajax' => true,
+                'inline_create' => true, // assumes the URL will be "/admin/category/inline/create"
+            ]
+            
   
         
 
@@ -174,4 +173,10 @@ class EffectCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+
+    public function fetchIndicators()
+    {
+        return $this->fetch(Indicator::class);
+    }
+    
 }

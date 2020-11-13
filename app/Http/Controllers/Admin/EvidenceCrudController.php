@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\IndicatorRequest;
+use App\Http\Requests\EvidenceRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class IndicatorCrudController
+ * Class EvidenceCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class IndicatorCrudController extends CrudController
+class EvidenceCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -27,9 +26,9 @@ class IndicatorCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Indicator::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/indicator');
-        CRUD::setEntityNameStrings('indicator', 'indicators');
+        CRUD::setModel(\App\Models\Evidence::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/evidence');
+        CRUD::setEntityNameStrings('evidence', 'evidence');
     }
 
     /**
@@ -57,7 +56,7 @@ class IndicatorCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(IndicatorRequest::class);
+        CRUD::setValidation(EvidenceRequest::class);
 
         CRUD::setFromDb(); // fields
 
