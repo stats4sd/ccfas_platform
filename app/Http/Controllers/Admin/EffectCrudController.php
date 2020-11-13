@@ -80,12 +80,6 @@ class EffectCrudController extends CrudController
                 'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
             
             ],  
-            [
-                'name'          => 'evidence',
-                'label'         => 'Provide evidence to back up your claim of an effect?',
-                'type'          => 'textarea'
-
-            ],
         
             [   // repeatable
                 'name'  => 'indicator_repeat',
@@ -143,24 +137,46 @@ class EffectCrudController extends CrudController
                 
             ],
 
-            [
-                'type' => "relationship",
-                'name' => 'evidence', // the method on your model that defines the relationship
-                'ajax' => true,
-                'inline_create' => true, // assumes the URL will be "/admin/category/inline/create"
-            ]
+            // [
+            //     'type' => "relationship",
+            //     'name' => 'evidences',
+            //     'ajax' => true,
+            //     'minimum_input_length' => 0,
+            //     'inline_create' => true,
+            //     'placeholder' => "Select a Evidence",
+              
+            // ],
+
+            [   // repeatable beneficiaries
+                'name'  => 'beneficiaries_repeat',
+                'label' => 'Beneficiaries',
+                'type'  => 'repeatable',
+                'fields' => [
+                    [
+                        'name'    => 'benef_description',
+                        'type'    => 'text',
+                        'label'   => 'Benficiarias desciption',
+                       
+                    ],                
+                    [
+                        'name'    => 'benef_type',
+                        'type' => "text",
+                        'label' => 'beneficiary type',
+                       
+                    ]
+                    
+                ],
             
-  
-        
+                // optional
+                'new_item_label'  => 'Add Beneficiary', // customize the text of the button
+                
+            ],
 
             
+            
+  
+            
         ]);
-        
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
-         */
     }
 
     /**
@@ -177,6 +193,11 @@ class EffectCrudController extends CrudController
     public function fetchIndicators()
     {
         return $this->fetch(Indicator::class);
+    }
+
+    public function fetchEvidences()
+    {
+        return $this->fetch(Evidence::class);
     }
     
 }

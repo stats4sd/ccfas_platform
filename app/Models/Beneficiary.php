@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class Evidence extends Model
+class Beneficiary extends Model
 {
     use CrudTrait;
 
@@ -15,7 +15,7 @@ class Evidence extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'evidences';
+    protected $table = 'beneficiaries';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -37,6 +37,11 @@ class Evidence extends Model
     public function effect()
     {
         return $this->belongsTo(Effect::class, 'effect_id');
+    }
+
+    public function beneficiaries_types()
+    {
+        return $this->belongsTo(BeneficiaryType::class, 'beneficiary_type_id');
     }
 
     /*

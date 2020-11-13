@@ -44,9 +44,14 @@ class Effect extends Model
         return $this->belongsToMany(Indicator::class, '_link_effects_indicators');
     }
 
-    public function evidence()
+    public function evidences()
     {
-        return $this->belongsTo(Evidence::class);
+        return $this->hasMany(Evidence::class);
+    }
+
+    public function beneficiaries()
+    {
+        return $this->hasMany(Beneficiary::class);
     }
 
     /*
