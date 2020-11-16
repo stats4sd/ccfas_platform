@@ -39,6 +39,11 @@ class Team extends Model
         return $this->belongsToMany(User::class, '_link_users_teams');
     }
 
+    public function effect()
+    {
+        return $this->belongsTo(Effect::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

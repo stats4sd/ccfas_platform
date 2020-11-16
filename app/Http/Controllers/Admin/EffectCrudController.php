@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Evidence;
+use App\Models\Action;
+use App\Models\Effect;
 use App\Models\Indicator;
+use App\Models\Beneficiary;
+use App\Models\BeneficiaryType;
 use App\Http\Requests\EffectRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -16,7 +19,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class EffectCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
@@ -63,24 +66,36 @@ class EffectCrudController extends CrudController
         CRUD::setValidation(EffectRequest::class);
 
         CRUD::addFields([ 
+            [  // Select
+                'label'     => "Team",
+                'type'      => 'select',
+                'name'      => 'team_id', 
+                'entity'    => 'teams', 
+                'model'     => "App\Models\Team", 
+                'attribute' => 'name', 
+                // optional - force the related options to be a custom query, instead of all();
+                'options'   => (function ($query) {
+                    $teams =  backpack_user()->teams()->pluck('teams.id')->toArray();
+                   
+                    return $query->whereIn('id', $teams)->get();
+                 }), 
+            ],
             [
                 'name'          => 'description',
                 'label'         => 'Provide a description of the effect you are reporting. There is no limit to the amount of information you can provide. ',
-                'type'          => 'textarea'
+                'type'          => 'textarea',
+
             ],
-            [   // SelectMultiple = n-n relationship (with pivot table)
-                'label'     => "Actions",
-                'type'      => 'select2_multiple',
-                'name'      => 'actions', // the method that defines the relationship in your Model
-            
-                // optional
-                'entity'    => 'actions', // the method that defines the relationship in your Model
-                'model'     => "App\Models\Action", // foreign key model
-                'attribute' => 'description', // foreign key attribute that is shown to user
-                'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
-            
-            ],  
-        
+            [
+                'type' => "relationship",
+                'name' => 'actions',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'action' ],
+                'placeholder' => "Select an Action",
+               
+              
+            ],
             [   // repeatable
                 'name'  => 'indicator_repeat',
                 'label' => 'This section collects information about indicators that measure the effect you have described. 
@@ -119,16 +134,8 @@ class EffectCrudController extends CrudController
                         'type'      => 'upload_multiple',
                         'upload'    => true,
                         'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
-                    ],
-                    // [
-                    //     'name'    => 'ind_status',
-                    //     'type' => "relationship",
-                    //     'name' => 'indicators_status',
-                    //     'ajax' => true,
-                    //     'minimum_input_length' => 0,
-                    //     'inline_create' => [ 'entity' => 'indicator_status' ],
-                    //     'placeholder' => "Select a Status", 
-                    // ]
+                    ]
+                   
                     
                 ],
             
@@ -136,16 +143,42 @@ class EffectCrudController extends CrudController
                 'new_item_label'  => 'Add Indicator', // customize the text of the button
                 
             ],
-
-            // [
-            //     'type' => "relationship",
-            //     'name' => 'evidences',
-            //     'ajax' => true,
-            //     'minimum_input_length' => 0,
-            //     'inline_create' => true,
-            //     'placeholder' => "Select a Evidence",
-              
-            // ],
+            [   // repeatable evidencies
+                'name'  => 'evidencies_repeat',
+                'label' => 'Evidence',
+                'type'  => 'repeatable',
+                'fields' => [
+                    [
+                        'name'    => 'evid_description',
+                        'type'    => 'text',
+                        'label'   => 'evidences desciption',                       
+                    ],  
+                    [
+                        'name'    => 'evid_file_description',
+                        'type'    => 'text',
+                        'label'   => 'file desciption',
+                       
+                    ],    
+                    [   // Upload
+                        'name'      => 'evid_file',
+                        'label'     => 'Evidence File',
+                        'type'      => 'upload_multiple',
+                        'upload'    => true,
+                        'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
+                    ],
+                    [
+                        'name'    => 'ind_url_source',
+                        'type'    => 'url',
+                        'label'   => 'Indicators url Source',
+                       
+                    ],
+                    
+                ],
+            
+                // optional
+                'new_item_label'  => 'Add Evidences', // customize the text of the button
+                
+            ],
 
             [   // repeatable beneficiaries
                 'name'  => 'beneficiaries_repeat',
@@ -155,15 +188,18 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'benef_description',
                         'type'    => 'text',
-                        'label'   => 'Benficiarias desciption',
+                        'label'   => 'Benficiaries desciption',
                        
                     ],                
                     [
                         'name'    => 'benef_type',
-                        'type' => "text",
+                        'type' => "select_from_array",
                         'label' => 'beneficiary type',
-                       
+                      
+                        // optional - force the related options to be a custom query, instead of all();
+                        'options'   => $this->getBeneficieryTypes(),     
                     ]
+                
                     
                 ],
             
@@ -171,11 +207,6 @@ class EffectCrudController extends CrudController
                 'new_item_label'  => 'Add Beneficiary', // customize the text of the button
                 
             ],
-
-            
-            
-  
-            
         ]);
     }
 
@@ -195,9 +226,38 @@ class EffectCrudController extends CrudController
         return $this->fetch(Indicator::class);
     }
 
-    public function fetchEvidences()
+    public function fetchActions()
     {
-        return $this->fetch(Evidence::class);
+        return $this->fetch(Action::class);
     }
+
+    public function getBeneficieryTypes()
+    {
+        $beneficiaries_types = BeneficiaryType::get();
+        $types = [];
+        foreach ($beneficiaries_types as $type) {
+            array_push($types,$type->name);
+        }
+       
+        return $types;
+
+      
+    }
+
+    public function store(EffectRequest $request)
+    {
+      // do something before validation, before save, before everything
+    //   dd($request->team_id);
+        $effect = Effect::create([
+            'team_id' => $request->team_id,
+            'description' => $request->description
+
+        ]);
+      $response = $this->traitStore();
+      // do something after save
+      return $response;
+    }
+
+   
     
 }
