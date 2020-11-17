@@ -44,6 +44,11 @@ class Team extends Model
         return $this->belongsTo(Effect::class);
     }
 
+    public function actions()
+    {
+        return $this->hasMany(Action::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

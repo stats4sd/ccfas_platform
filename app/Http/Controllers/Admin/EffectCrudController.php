@@ -8,8 +8,11 @@ use App\Models\Indicator;
 use App\Models\Beneficiary;
 use App\Models\BeneficiaryType;
 use App\Http\Requests\EffectRequest;
+use App\Models\IndicatorValue;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+
+use function GuzzleHttp\json_decode;
 
 /**
  * Class EffectCrudController
@@ -133,7 +136,23 @@ class EffectCrudController extends CrudController
                         'label'     => 'Indicators File Source',
                         'type'      => 'upload_multiple',
                         'upload'    => true,
-                        'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
+                        'disk'      => 'public', 
+                    ],
+                    [
+                        'name'    => 'indicator_status_id',
+                        'type' => "select_from_array",
+                        'label' => 'Indicator Status',
+                      
+                        // optional - force the related options to be a custom query, instead of all();
+                        'options'   => ['opnion1', 'opnion2'],     
+                    ],
+                    [
+                        'name'    => 'disaggregation_id',
+                        'type' => "select_from_array",
+                        'label' => 'Disaggregation',
+                      
+                        // optional - force the related options to be a custom query, instead of all();
+                        'options'   => ['opnion1', 'opnion2'],     
                     ]
                    
                     
@@ -233,29 +252,39 @@ class EffectCrudController extends CrudController
 
     public function getBeneficieryTypes()
     {
-        $beneficiaries_types = BeneficiaryType::get();
-        $types = [];
-        foreach ($beneficiaries_types as $type) {
-            array_push($types,$type->name);
-        }
-       
-        return $types;
-
-      
+        return BeneficiaryType::get()->pluck('name','id');
     }
 
     public function store(EffectRequest $request)
     {
-      // do something before validation, before save, before everything
-    //   dd($request->team_id);
-        $effect = Effect::create([
-            'team_id' => $request->team_id,
-            'description' => $request->description
 
-        ]);
-      $response = $this->traitStore();
-      // do something after save
-      return $response;
+      // do something before validation, before save, before everything
+
+        $response = $this->traitStore();
+
+        //Indicator repeat
+        $repeat = json_decode($request->indicator_repeat);
+        
+        foreach($repeat as $indicator_value ){
+          //problem with file
+            $indicator_value = IndicatorValue::create([
+                'value' => $indicator_value->ind_value,
+                'url_source' => $indicator_value->ind_url_source,
+                // 'file_source' => $indicator_value[ind_file_source[]],
+                'indicator_status_id' => $indicator_value->indicator_status_id,
+                'disaggregation_id'=> $indicator_value->disaggregation_id
+    
+            ]);
+    
+            $indicator_value->save();
+           
+        }
+
+
+        
+
+        // do something after save
+        return $response;
     }
 
    

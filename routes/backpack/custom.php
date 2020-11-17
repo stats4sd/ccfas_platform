@@ -24,4 +24,13 @@ Route::group([
     Route::crud('evidence', 'EvidenceCrudController');
     Route::crud('beneficiary', 'BeneficiaryCrudController');
     Route::crud('beneficiarytype', 'BeneficiaryTypeCrudController');
+    Route::crud('product', 'ProductCrudController');
+    Route::crud('aim', 'AimCrudController');
+    Route::crud('ipflow', 'IpflowCrudController');
+    Route::crud('scope', 'ScopeCrudController');
+    Route::crud('geoboundary', 'GeoBoundaryCrudController');
+    Route::crud('csaframework', 'CsaFrameworkCrudController');
+    Route::crud('subactivity', 'SubactivityCrudController');
+    Route::crud('activity', 'ActivityCrudController');
+    Route::crud('output', 'OutputCrudController');
 }); // this should be the absolute last line of this file

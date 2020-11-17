@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Aim;
 use App\Http\Requests\ActionRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -19,6 +20,7 @@ class ActionCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -40,13 +42,26 @@ class ActionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // columns
+        
+        $this->crud->addColumns([
+            [
+                'label'     => "Team",
+                'type'      => 'select',
+                'name'      => 'team_id',
+                'entity'    => 'team', 
+                'model'     => "App\Models\Team",
+                'attribute' => 'name',
+               
+            ],
+            [
+                'type' => "text",
+                'name' => 'description',
+                'label' => 'Description'
 
-        /**
-         * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
-         */
+            ],
+
+        ]);
+
     }
 
     /**
@@ -59,13 +74,98 @@ class ActionCrudController extends CrudController
     {
         CRUD::setValidation(ActionRequest::class);
 
-        CRUD::setFromDb(); // fields
+       
+        CRUD::addFields([ 
+            [  // Select
+                'label'     => "Team",
+                'type'      => 'select',
+                'name'      => 'team_id', 
+                'entity'    => 'team', 
+                'model'     => "App\Models\Team", 
+                'attribute' => 'name', 
+                // optional - force the related options to be a custom query, instead of all();
+                'options'   => (function ($query) {
+                    $teams =  backpack_user()->teams()->pluck('teams.id')->toArray();
+                   
+                    return $query->whereIn('id', $teams)->get();
+                 }), 
+            ],
+            [
+                'name'          => 'description',
+                'label'         => 'Provide a description of the action you are reporting. There is no limit to the amount of information you can provide. ',
+                'type'          => 'textarea',
 
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
-         */
+            ],
+            [
+                'name'          => 'start',
+                'label'         => 'Start',
+                'type'          => 'date',
+
+            ],
+            [
+                'name'          => 'end',
+                'label'         => 'End',
+                'type'          => 'date',
+
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'geo_boundaries',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'geoboundary' ],
+                'placeholder' => "Select an Geo Boundaries",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'aims',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'aim' ],
+                'placeholder' => "Select an Aim",
+              
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'scopes',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'scope' ],
+                'placeholder' => "Select an Scope",
+                
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'ipflows',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'ipflow' ],
+                'placeholder' => "Select an Ipflow",
+                
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'products',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'product' ],
+                'placeholder' => "Select an Product",
+                
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'subactivities',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'subactivity' ],
+                'placeholder' => "Select an Subactivity",
+                
+            ],
+        ]);
+
+       
     }
 
     /**
@@ -78,4 +178,15 @@ class ActionCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+
+    public function fetchAims()
+    {
+        return $this->fetch([
+            'model' => Aim::class,
+            'query' => function ($model) {
+            return $model->where('is_other', '=', false);
+            }
+            ]);
+    }
+
 }
