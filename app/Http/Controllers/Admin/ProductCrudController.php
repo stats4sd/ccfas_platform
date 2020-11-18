@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Product;
+use App\Models\ProductType;
 use App\Http\Requests\ProductRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -40,13 +42,21 @@ class ProductCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        
+        
+        $this->crud->setColumns([
+            [
+                'label'     => "Product Type",
+                'type'      => 'select',
+                'name'      => 'product_type_id',
+                'entity'    => 'product_type', 
+                'model'     => "App\Models\ProductType",
+                'attribute' => 'name',
+                
+            ]
+        ]);
+        
         CRUD::setFromDb(); // columns
-
-        /**
-         * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
-         */
     }
 
     /**
@@ -59,8 +69,21 @@ class ProductCrudController extends CrudController
     {
         CRUD::setValidation(ProductRequest::class);
 
-        CRUD::setFromDb(); // fields
-
+        
+        // CRUD::setFromDb(); // fields
+        CRUD::addField(
+            [
+                'type' => "relationship",
+                'name' => 'producttype',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => true,
+                'placeholder' => "Select an Product Type",
+                'inline_create' => true,
+                
+            ],
+        ); 
+        
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
@@ -77,5 +100,15 @@ class ProductCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function fetchProducttype()
+    {
+        return $this->fetch([
+            'model' => ProductType::class,
+            'query' => function ($model) {
+            return $model->where('is_other', '=', false);
+            }
+        ]);
     }
 }

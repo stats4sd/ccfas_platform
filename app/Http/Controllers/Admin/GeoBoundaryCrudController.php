@@ -29,7 +29,7 @@ class GeoBoundaryCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\GeoBoundary::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/geoboundary');
-        CRUD::setEntityNameStrings('geoboundary', 'geo_boundaries');
+        CRUD::setEntityNameStrings('geoBoundary', 'geo boundaries');
     }
 
     /**
@@ -59,13 +59,18 @@ class GeoBoundaryCrudController extends CrudController
     {
         CRUD::setValidation(GeoBoundaryRequest::class);
 
+        CRUD::addFields([ 
+            [  // Select
+                'label'     => "Country",
+                'type'      => 'select',
+                'name'      => 'country_id', 
+                'entity'    => 'country', 
+                'model'     => "App\Models\Country", 
+                'attribute' => 'name', 
+            ]
+        ]);
         CRUD::setFromDb(); // fields
 
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
-         */
     }
 
     /**

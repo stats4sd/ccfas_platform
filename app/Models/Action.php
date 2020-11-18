@@ -64,14 +64,14 @@ class Action extends Model
         return $this->belongsToMany(Scope::class, '_link_actions_scopes');
     }
 
-    public function geo_boundaries()
+    public function geoboundaries()
     {
         return $this->belongsToMany(GeoBoundary::class, '_link_actions_geo_boundaries');
     }
 
-    public function csa_frameworks()
+    public function csaframeworks()
     {
-        return $this->belongsToMany(CsaFramework::class, '_link_actions_csa_frameworks');
+        return $this->belongsToMany(CsaFramework::class, '_link_actions_csa_frameworks', 'action_id', 'csa_framework_id');
     }
 
     public function subactivities()

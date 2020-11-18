@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Aim;
+use App\Models\Product;
+use App\Models\GeoBoundary;
+use App\Models\ProductType;
 use App\Http\Requests\ActionRequest;
+use App\Models\CsaFramework;
+use App\Models\Subactivity;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -51,12 +56,12 @@ class ActionCrudController extends CrudController
                 'entity'    => 'team', 
                 'model'     => "App\Models\Team",
                 'attribute' => 'name',
-               
+
             ],
             [
                 'type' => "text",
                 'name' => 'description',
-                'label' => 'Description'
+                'label' => 'Description',
 
             ],
 
@@ -74,7 +79,6 @@ class ActionCrudController extends CrudController
     {
         CRUD::setValidation(ActionRequest::class);
 
-       
         CRUD::addFields([ 
             [  // Select
                 'label'     => "Team",
@@ -89,28 +93,27 @@ class ActionCrudController extends CrudController
                    
                     return $query->whereIn('id', $teams)->get();
                  }), 
+                
             ],
             [
                 'name'          => 'description',
                 'label'         => 'Provide a description of the action you are reporting. There is no limit to the amount of information you can provide. ',
                 'type'          => 'textarea',
-
+                
             ],
             [
                 'name'          => 'start',
                 'label'         => 'Start',
                 'type'          => 'date',
-
             ],
             [
                 'name'          => 'end',
                 'label'         => 'End',
                 'type'          => 'date',
-
             ],
             [
                 'type' => "relationship",
-                'name' => 'geo_boundaries',
+                'name' => 'geoboundaries',
                 'ajax' => true,
                 'minimum_input_length' => 0,
                 'inline_create' => [ 'entity' => 'geoboundary' ],
@@ -125,23 +128,16 @@ class ActionCrudController extends CrudController
                 'inline_create' => [ 'entity' => 'aim' ],
                 'placeholder' => "Select an Aim",
               
-              
             ],
             [
                 'type' => "relationship",
                 'name' => 'scopes',
-                'ajax' => true,
-                'minimum_input_length' => 0,
-                'inline_create' => [ 'entity' => 'scope' ],
                 'placeholder' => "Select an Scope",
                 
             ],
             [
                 'type' => "relationship",
                 'name' => 'ipflows',
-                'ajax' => true,
-                'minimum_input_length' => 0,
-                'inline_create' => [ 'entity' => 'ipflow' ],
                 'placeholder' => "Select an Ipflow",
                 
             ],
@@ -157,10 +153,16 @@ class ActionCrudController extends CrudController
             [
                 'type' => "relationship",
                 'name' => 'subactivities',
+                'placeholder' => "Select an Subactivity",
+                
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'csaframeworks',
                 'ajax' => true,
                 'minimum_input_length' => 0,
-                'inline_create' => [ 'entity' => 'subactivity' ],
-                'placeholder' => "Select an Subactivity",
+                'inline_create' => [ 'entity' => 'csaframework' ],
+                'placeholder' => "Select an CSA Framework",
                 
             ],
         ]);
@@ -186,7 +188,26 @@ class ActionCrudController extends CrudController
             'query' => function ($model) {
             return $model->where('is_other', '=', false);
             }
-            ]);
+        ]);
     }
+    public function fetchGeoboundaries()
+    {
+        return $this->fetch(GeoBoundary::class);
+    }
+
+    public function fetchProducts()
+    {
+        return $this->fetch([
+            'model' => Product::class, // required
+            'searchable_attributes' => ['publication'],
+            
+        
+        ]);
+    }
+    public function fetchCsaframeworks()
+    {
+        return $this->fetch(CsaFramework::class);
+    }
+
 
 }

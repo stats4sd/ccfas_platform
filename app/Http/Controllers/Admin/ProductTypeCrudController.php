@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\AimRequest;
+use App\Http\Requests\ProductTypeRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class AimCrudController
+ * Class ProductTypeCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class AimCrudController extends CrudController
+class ProductTypeCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -27,9 +27,9 @@ class AimCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Aim::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/aim');
-        CRUD::setEntityNameStrings('aim', 'aims');
+        CRUD::setModel(\App\Models\ProductType::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/producttype');
+        CRUD::setEntityNameStrings('productType', 'product types');
     }
 
     /**
@@ -41,8 +41,7 @@ class AimCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setFromDb(); // columns
-        // CRUD::addColumn(['name' => 'name', 'type' => 'text']); 
-        // add a "simple" filter called Draft
+
         $this->crud->addFilter([ 
             'type'  => 'simple',
             'name'  => 'is_other',
@@ -55,7 +54,6 @@ class AimCrudController extends CrudController
           
         });
 
-        
     }
 
     /**
@@ -66,7 +64,7 @@ class AimCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(AimRequest::class);
+        CRUD::setValidation(ProductTypeRequest::class);
 
         $this->crud->addFields([
            
@@ -108,5 +106,4 @@ class AimCrudController extends CrudController
         );
             
     }
-
 }

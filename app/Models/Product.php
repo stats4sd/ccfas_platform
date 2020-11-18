@@ -39,6 +39,12 @@ class Product extends Model
         return $this->belongsToMany(Action::class, '_link_actions_products');
     }
 
+    
+    public function producttype()
+    {
+        return $this->belongsTo(ProductType::class);
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -51,6 +57,12 @@ class Product extends Model
     | ACCESSORS
     |--------------------------------------------------------------------------
     */
+    public function getAudienceAttribute()
+    {
+        return $this->publication . ' ' . $this->distribution . ' ' . $this->publication_date;
+    }
+
+    
 
     /*
     |--------------------------------------------------------------------------

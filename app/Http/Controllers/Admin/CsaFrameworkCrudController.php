@@ -29,7 +29,7 @@ class CsaFrameworkCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\CsaFramework::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/csaframework');
-        CRUD::setEntityNameStrings('csaframework', 'csa_frameworks');
+        CRUD::setEntityNameStrings('csa framework', 'csaframeworks');
     }
 
     /**
@@ -59,13 +59,64 @@ class CsaFrameworkCrudController extends CrudController
     {
         CRUD::setValidation(CsaFrameworkRequest::class);
 
-        CRUD::setFromDb(); // fields
+        CRUD::addFields([ 
+            [
+                'name'          => 'name',
+                'label'         => 'Name',
+                'type'          => 'text',
+                
+            ],
+            [
+                'name'          => 'description',
+                'label'         => 'Description',
+                'type'          => 'textarea',
+                
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'pillars',
+                'placeholder' => "Select Pillars",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'systems',
+                'placeholder' => "Select Systems",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'practices',
+                'placeholder' => "Select Practices",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'enable_envs',
+                'placeholder' => "Select Enable Env",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'elements',
+                'placeholder' => "Select Elements",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'investments',
+                'placeholder' => "Select an Investments",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'main_actions',
+                'placeholder' => "Select an Main Actions",  
+              
+            ],
+        ]);
 
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
-         */
+
     }
 
     /**

@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\AimRequest;
+use App\Http\Requests\MainActionRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class AimCrudController
+ * Class MainActionCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class AimCrudController extends CrudController
+class MainActionCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -27,9 +26,9 @@ class AimCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Aim::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/aim');
-        CRUD::setEntityNameStrings('aim', 'aims');
+        CRUD::setModel(\App\Models\MainAction::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/mainaction');
+        CRUD::setEntityNameStrings('mainaction', 'main_actions');
     }
 
     /**
@@ -41,21 +40,12 @@ class AimCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setFromDb(); // columns
-        // CRUD::addColumn(['name' => 'name', 'type' => 'text']); 
-        // add a "simple" filter called Draft
-        $this->crud->addFilter([ 
-            'type'  => 'simple',
-            'name'  => 'is_other',
-            'label' => 'Show no other',
-           
-        ],
-        true, // the simple filter has no values, just the "Draft" label specified above
-        function() { // if the filter is active (the GET parameter "draft" exits)
-            $this->crud->addClause('where', 'is_other', '0'); 
-          
-        });
 
-        
+        /**
+         * Columns can be defined using the fluent syntax or array syntax:
+         * - CRUD::column('price')->type('number');
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         */
     }
 
     /**
@@ -66,23 +56,15 @@ class AimCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(AimRequest::class);
+        CRUD::setValidation(MainActionRequest::class);
 
-        $this->crud->addFields([
-           
-            [
-                'type' => "text",
-                'name' => 'name',
-                'label' => 'Name'
+        CRUD::setFromDb(); // fields
 
-            ],
-            [
-                'type' => "hidden",
-                'name' => 'is_other',
-                'value' =>'0'
-            ],
-
-        ]);
+        /**
+         * Fields can be defined using the fluent syntax or array syntax:
+         * - CRUD::field('price')->type('number');
+         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         */
     }
 
     /**
@@ -95,18 +77,4 @@ class AimCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
-
-    protected function setupInlineCreateOperation()
-    {
-        $this->crud->modifyField('is_other',
-           
-            [
-                'type' => "hidden",
-                'name' => 'is_other',
-                'value' => '1'
-            ],
-        );
-            
-    }
-
 }

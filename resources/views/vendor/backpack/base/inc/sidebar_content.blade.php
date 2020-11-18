@@ -25,3 +25,13 @@
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('scope') }}'><i class='nav-icon la la-question'></i> Scopes</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('geoboundary') }}'><i class='nav-icon la la-question'></i> GeoBoundaries</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('csaframework') }}'><i class='nav-icon la la-question'></i> CsaFrameworks</a></li>
+
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('producttype?is_other=true') }}'><i class='nav-icon la la-question'></i> ProductTypes</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('country') }}'><i class='nav-icon la la-question'></i> Countries</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('pillar') }}'><i class='nav-icon la la-question'></i> Pillars</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('system') }}'><i class='nav-icon la la-question'></i> Systems</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('practice') }}'><i class='nav-icon la la-question'></i> Practices</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('element') }}'><i class='nav-icon la la-question'></i> Elements</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('investment') }}'><i class='nav-icon la la-question'></i> Investments</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('mainaction') }}'><i class='nav-icon la la-question'></i> MainActions</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('enableenv') }}'><i class='nav-icon la la-question'></i> EnableEnvs</a></li>

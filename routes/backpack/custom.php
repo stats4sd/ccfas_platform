@@ -33,4 +33,13 @@ Route::group([
     Route::crud('subactivity', 'SubactivityCrudController');
     Route::crud('activity', 'ActivityCrudController');
     Route::crud('output', 'OutputCrudController');
+    Route::crud('producttype', 'ProductTypeCrudController');
+    Route::crud('country', 'CountryCrudController');
+    Route::crud('pillar', 'PillarCrudController');
+    Route::crud('system', 'SystemCrudController');
+    Route::crud('practice', 'PracticeCrudController');
+    Route::crud('element', 'ElementCrudController');
+    Route::crud('investment', 'InvestmentCrudController');
+    Route::crud('mainaction', 'MainActionCrudController');
+    Route::crud('enableenv', 'EnableEnvCrudController');
 }); // this should be the absolute last line of this file

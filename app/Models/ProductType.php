@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class GeoBoundary extends Model
+class ProductType extends Model
 {
     use CrudTrait;
 
@@ -15,7 +15,7 @@ class GeoBoundary extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'geo_boundaries';
+    protected $table = 'products_types';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -34,15 +34,9 @@ class GeoBoundary extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-
-    public function actions()
+    public function products()
     {
-        return $this->belongsToMany(Action::class, '_link_actions_geo_boundaries');
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
+        return $this->hasMany(Product::class);
     }
 
     /*
