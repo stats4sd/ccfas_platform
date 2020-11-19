@@ -19,6 +19,7 @@ class Product extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
+    protected $appends = ['name_display'];
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
@@ -57,7 +58,7 @@ class Product extends Model
     | ACCESSORS
     |--------------------------------------------------------------------------
     */
-    public function getAudienceAttribute()
+    public function getNameDisplayAttribute()
     {
         return $this->publication . ' ' . $this->distribution . ' ' . $this->publication_date;
     }

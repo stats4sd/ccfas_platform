@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Action;
 use App\Models\Effect;
+use App\Models\Evidence;
 use App\Models\Indicator;
 use App\Models\Beneficiary;
+use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
 use App\Http\Requests\EffectRequest;
-use App\Models\IndicatorValue;
+use function GuzzleHttp\json_decode;
+
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-
-use function GuzzleHttp\json_decode;
 
 /**
  * Class EffectCrudController
@@ -49,13 +50,24 @@ class EffectCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // columns
+        $this->crud->addColumns([
+            [
+                'label'     => "Team",
+                'type'      => 'select',
+                'name'      => 'team_id',
+                'entity'    => 'team', 
+                'model'     => "App\Models\Team",
+                'attribute' => 'name',
 
-        /**
-         * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
-         */
+            ],
+            [
+                'type' => "text",
+                'name' => 'description',
+                'label' => 'Description',
+
+            ],
+
+        ]);
     }
 
     /**
@@ -73,7 +85,7 @@ class EffectCrudController extends CrudController
                 'label'     => "Team",
                 'type'      => 'select',
                 'name'      => 'team_id', 
-                'entity'    => 'teams', 
+                'entity'    => 'team', 
                 'model'     => "App\Models\Team", 
                 'attribute' => 'name', 
                 // optional - force the related options to be a custom query, instead of all();
@@ -260,25 +272,44 @@ class EffectCrudController extends CrudController
 
       // do something before validation, before save, before everything
 
-        $response = $this->traitStore();
+     
+          $response = $this->traitStore();
+          $effect = $this->crud->getCurrentEntry();
 
-        //Indicator repeat
-        $repeat = json_decode($request->indicator_repeat);
+       
+        // //Indicator repeat
+        // $indicator_repeat = json_decode($request->indicator_repeat);
         
-        foreach($repeat as $indicator_value ){
-          //problem with file
-            $indicator_value = IndicatorValue::create([
-                'value' => $indicator_value->ind_value,
-                'url_source' => $indicator_value->ind_url_source,
-                // 'file_source' => $indicator_value[ind_file_source[]],
-                'indicator_status_id' => $indicator_value->indicator_status_id,
-                'disaggregation_id'=> $indicator_value->disaggregation_id
+        // foreach($indicator_repeat as $indicator ){
+        //   //problem with file
+        //     $indicator_value = IndicatorValue::create([
+        //         'value' => $indicator->ind_value,
+        //         'url_source' => $indicator->ind_url_source,
+        //         // 'file_source' => $indicator[ind_file_source[]],
+        //         'indicator_status_id' => $indicator->indicator_status_id,
+        //         'disaggregation_id'=> $indicator->disaggregation_id
+        //     ]);
     
-            ]);
-    
-            $indicator_value->save();
+        //     $indicator_value->save();
            
-        }
+        // }
+
+        // //Evidence repeat
+        // $evidence_repeat = json_decode($request->evidence_repeat);
+        
+        // foreach($evidence_repeat as $evid ){
+        //   //problem with file
+        //     $evidence = Evidence::create([
+        //         'effect_id' => $evidence_repeat->ind_value,
+        //         'url_source' => $indicator_value->ind_url_source,
+        //         // 'file_source' => $indicator_value[ind_file_source[]],
+        //         'indicator_status_id' => $indicator_value->indicator_status_id,
+        //         'disaggregation_id'=> $indicator_value->disaggregation_id
+        //     ]);
+    
+        //     $indicator_value->save();
+           
+        // }
 
 
         

@@ -36,7 +36,7 @@ class Indicator extends Model
     */
     public function effects()
     {
-        return $this->belongsToMany(Effect::class, '_link_effects_indicators');
+        return $this->belongsToMany(Effect::class, '_link_effects_indicators','effect_id', 'indicator_id');
     }
 
     /*

@@ -42,7 +42,7 @@ class Effect extends Model
 
     public function indicators()
     {
-        return $this->belongsToMany(Indicator::class, '_link_effects_indicators');
+        return $this->belongsToMany(Indicator::class, '_link_effects_indicators','effect_id', 'indicator_id');
     }
 
     public function evidences()
@@ -55,10 +55,11 @@ class Effect extends Model
         return $this->hasMany(Beneficiary::class);
     }
 
-    public function teams()
+    public function team()
     {
-        return $this->hasMany(Team::class);
+        return $this->belongsTo(Team::class);
     }
+
 
     /*
     |--------------------------------------------------------------------------

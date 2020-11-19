@@ -21,6 +21,7 @@ class ProductCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -44,17 +45,17 @@ class ProductCrudController extends CrudController
     {
         
         
-        $this->crud->setColumns([
-            [
-                'label'     => "Product Type",
-                'type'      => 'select',
-                'name'      => 'product_type_id',
-                'entity'    => 'product_type', 
-                'model'     => "App\Models\ProductType",
-                'attribute' => 'name',
+        // $this->crud->setColumns([
+        //     [
+        //         'label'     => "Product Type",
+        //         'type'      => 'select',
+        //         'name'      => 'producttype',
+        //         'entity'    => 'producttype', 
+        //         'model'     => "App\Models\ProductType",
+        //         'attribute' => 'name',
                 
-            ]
-        ]);
+        //     ]
+        // ]);
         
         CRUD::setFromDb(); // columns
     }
@@ -70,8 +71,7 @@ class ProductCrudController extends CrudController
         CRUD::setValidation(ProductRequest::class);
 
         
-        // CRUD::setFromDb(); // fields
-        CRUD::addField(
+        CRUD::addfield(
             [
                 'type' => "relationship",
                 'name' => 'producttype',
@@ -83,6 +83,7 @@ class ProductCrudController extends CrudController
                 
             ],
         ); 
+        CRUD::setFromDb(); // fields
         
         /**
          * Fields can be defined using the fluent syntax or array syntax:

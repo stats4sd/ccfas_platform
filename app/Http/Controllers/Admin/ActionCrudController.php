@@ -148,6 +148,7 @@ class ActionCrudController extends CrudController
                 'minimum_input_length' => 0,
                 'inline_create' => [ 'entity' => 'product' ],
                 'placeholder' => "Select an Product",
+                'attribute' =>'name_display'
                 
             ],
             [
@@ -197,12 +198,7 @@ class ActionCrudController extends CrudController
 
     public function fetchProducts()
     {
-        return $this->fetch([
-            'model' => Product::class, // required
-            'searchable_attributes' => ['publication'],
-            
-        
-        ]);
+        return $this->fetch(Product::class);
     }
     public function fetchCsaframeworks()
     {

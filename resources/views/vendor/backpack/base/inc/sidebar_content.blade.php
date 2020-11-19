@@ -1,16 +1,17 @@
 <!-- This file is used to store sidebar items, starting with Backpack\Base 0.9.0 -->
 <!-- <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i> {{ trans('backpack::base.dashboard') }}</a></li> -->
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('effect') }}'><i class='nav-icon la la-question'></i> Effects</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('action') }}'><i class='nav-icon la la-question'></i> Actions</a></li>
+
 <li class='nav-item nav-dropdown'>
     <a class='nav-link nav-dropdown-toggle' href="#"><i class="nav-icon fa fa-newspaper-o"></i>LogFrameworks</a>
     <ul class="nav-dropdown-items">
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('subactivity') }}'><i class='nav-icon la la-question'></i> Subactivities</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('activity') }}'><i class='nav-icon la la-question'></i> Activities</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('output') }}'><i class='nav-icon la la-question'></i> Outputs</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('activity') }}'><i class='nav-icon la la-question'></i> Activities</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('subactivity') }}'><i class='nav-icon la la-question'></i> Subactivities</a></li>
     </ul>
 </li>
 
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('effect') }}'><i class='nav-icon la la-question'></i> Effects</a></li>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('action') }}'><i class='nav-icon la la-question'></i> Actions</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicator') }}'><i class='nav-icon la la-question'></i> Indicators</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicatorstatus') }}'><i class='nav-icon la la-question'></i> IndicatorStatuses</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicatorvalue') }}'><i class='nav-icon la la-question'></i> IndicatorValues</a></li>

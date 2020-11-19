@@ -105,13 +105,13 @@ return [
     // change background color with bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan, bg-white
 
     // Developer or company name. Shown in footer.
-    'developer_name' => 'Cristian Tabacitu',
+    'developer_name' => 'Stat4SD',
 
     // Developer website. Link in footer. Type false if you want to hide it.
-    'developer_link' => 'http://tabacitu.ro',
+    'developer_link' => 'https://stats4sd.org/',
 
     // Show powered by Laravel Backpack in the footer? true/false
-    'show_powered_by' => true,
+    'show_powered_by' => false,
 
     // -------
     // SCRIPTS
@@ -212,9 +212,9 @@ return [
     */
 
     // Fully qualified namespace of the User model
-    'user_model_fqn' => config('auth.providers.users.model'),
+    // 'user_model_fqn' => config('auth.providers.users.model'),
     // 'user_model_fqn' => App\User::class, // works on Laravel <= 7
-    // 'user_model_fqn' => App\Models\User::class, // works on Laravel >= 8
+    'user_model_fqn' => App\Models\User::class, // works on Laravel >= 8
 
     // The classes for the middleware to check if the visitor is an admin
     // Can be a single class or an array of classes
@@ -225,7 +225,7 @@ return [
     ],
 
     // Alias for that middleware
-    'middleware_key' => 'admin',
+    'middleware_key' => 'ccfsa',
     // Note: It's recommended to use the backpack_middleware() helper everywhere, which pulls this key for you.
 
     // Username column for authentication
