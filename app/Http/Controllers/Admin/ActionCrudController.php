@@ -47,6 +47,19 @@ class ActionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        $this->crud->addFilter([ 
+            'type'  => 'simple',
+            'name'  => 'team_id',
+            'label' => 'Team'
+          ],
+          false,
+          function() { 
+            $teams = backpack_user()->teams;
+            
+            $this->crud->addClause('whereIn', 'team_id', $teams); 
+       
+        });
+
         
         $this->crud->addColumns([
             [
@@ -159,13 +172,46 @@ class ActionCrudController extends CrudController
             ],
             [
                 'type' => "relationship",
-                'name' => 'csaframeworks',
-                'ajax' => true,
-                'minimum_input_length' => 0,
-                'inline_create' => [ 'entity' => 'csaframework' ],
-                'placeholder' => "Select an CSA Framework",
-                
+                'name' => 'pillars',
+                'placeholder' => "Select Pillars",  
+              
             ],
+            [
+                'type' => "relationship",
+                'name' => 'systems',
+                'placeholder' => "Select Systems",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'practices',
+                'placeholder' => "Select Practices",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'enable_envs',
+                'placeholder' => "Select Enable Env",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'elements',
+                'placeholder' => "Select Elements",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'investments',
+                'placeholder' => "Select an Investments",  
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'main_actions',
+                'placeholder' => "Select an Main Actions",  
+              
+            ]
         ]);
 
        
@@ -200,10 +246,5 @@ class ActionCrudController extends CrudController
     {
         return $this->fetch(Product::class);
     }
-    public function fetchCsaframeworks()
-    {
-        return $this->fetch(CsaFramework::class);
-    }
-
 
 }

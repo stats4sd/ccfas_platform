@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\EvidenceRequest;
+use App\Http\Requests\LinkEffectIndicatorRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class EvidenceCrudController
+ * Class LinkEffectIndicatorCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class EvidenceCrudController extends CrudController
+class LinkEffectIndicatorCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -28,9 +26,9 @@ class EvidenceCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Evidence::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/evidence');
-        CRUD::setEntityNameStrings('evidence', 'evidence');
+        CRUD::setModel(\App\Models\LinkEffectIndicator::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/linkeffectindicator');
+        CRUD::setEntityNameStrings('linkeffectindicator', 'link_effect_indicators');
     }
 
     /**
@@ -58,7 +56,7 @@ class EvidenceCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(EvidenceRequest::class);
+        CRUD::setValidation(LinkEffectIndicatorRequest::class);
 
         CRUD::setFromDb(); // fields
 

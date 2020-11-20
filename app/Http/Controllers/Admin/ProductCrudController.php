@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Facades\Request;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -69,21 +70,75 @@ class ProductCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(ProductRequest::class);
-
         
-        CRUD::addfield(
-            [
+        CRUD::addFields([
+            [ 
                 'type' => "relationship",
-                'name' => 'producttype',
-                'ajax' => true,
-                'minimum_input_length' => 0,
-                'inline_create' => true,
-                'placeholder' => "Select an Product Type",
-                'inline_create' => true,
+                'name' => 'product_type_id',
+                // OPTIONALS:
+                'label' => "Product Type",
+                'attribute' => "name", 
+                'entity' => 'product_type',
+                'model' => "App\Models\ProductType",
+                'placeholder' => "Select a Product Type", 
                 
             ],
-        ); 
-        CRUD::setFromDb(); // fields
+            [
+                'type' => "text",
+                'name' => 'audience',  
+                'label' => 'Audience'
+            ],
+            [
+                'type' => "number",
+                'name' => 'audience_size',  
+                'label' => 'Audience size'
+            ],
+            [
+                'type' => "text",
+                'name' => 'publication',  
+                'label' => 'Publication'
+            ],
+            [
+                'type' => "text",
+                'name' => 'distribution',  
+                'label' => 'Distribution'
+            ],
+            [
+                'type' => "date",
+                'name' => 'publication_date',  
+                'label' => 'Publication date'
+            ],
+            [
+                'type' => "url",
+                'name' => 'publication_url',  
+                'label' => 'Publication Url'
+            ],
+            [
+                'type' => "text",
+                'name' => 'partner',  
+                'label' => 'Partners'
+            ],
+            [
+                'type' => "text",
+                'name' => 'info_hosted',  
+                'label' => 'Info Hosted'
+            ],
+            [
+                'type' => "url",
+                'name' => 'url',  
+                'label' => 'Url'
+            ],
+            [
+                'type' => "text",
+                'name' => 'access_conditions',  
+                'label' => 'Access Conditions'
+            ],
+
+
+        ]); 
+          
+        // CRUD::setFromDb(); // fields
+
         
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -103,7 +158,7 @@ class ProductCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-    public function fetchProducttype()
+    public function fetchProduct_type()
     {
         return $this->fetch([
             'model' => ProductType::class,
@@ -112,4 +167,15 @@ class ProductCrudController extends CrudController
             }
         ]);
     }
+
+    // public function store(Request $request)
+    // {
+    //     dd($request);
+    //     $response = $this->traitStore();
+
+    //   // do something before validation, before save, before everything
+
+     
+    //     return $response;
+    // }
 }

@@ -13,9 +13,9 @@ class CreateLinkCsaFrameworksPillarsTable extends Migration
      */
     public function up()
     {
-        Schema::create('_link_csa_frameworks_pillars', function (Blueprint $table) {
+        Schema::create('_link_actions_pillars', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('csa_framework_id')->constrained('csa_frameworks')->onDelete('cascade');
+            $table->foreignId('action_id')->constrained()->onDelete('cascade');
             $table->foreignId('pillar_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ class CreateLinkCsaFrameworksPillarsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_link_csa_frameworks_pillars');
+        Schema::dropIfExists('_link_actions_pillars');
     }
 }

@@ -69,15 +69,46 @@ class Action extends Model
         return $this->belongsToMany(GeoBoundary::class, '_link_actions_geo_boundaries');
     }
 
-    public function csaframeworks()
-    {
-        return $this->belongsToMany(CsaFramework::class, '_link_actions_csa_frameworks', 'action_id', 'csa_framework_id');
-    }
-
     public function subactivities()
     {
         return $this->belongsToMany(Subactivity::class, '_link_actions_subactivities');
     }
+
+    public function pillars()
+    {
+        return $this->belongsToMany(Pillar::class, '_link_actions_pillars');
+    }
+
+    public function systems()
+    {
+        return $this->belongsToMany(System::class, '_link_actions_systems');
+    }
+
+    public function practices()
+    {
+        return $this->belongsToMany(Practice::class, '_link_actions_practices');
+    }
+
+    public function enable_envs()
+    {
+        return $this->belongsToMany(EnableEnv::class, '_link_actions_enable_envs');
+    }
+
+    public function elements()
+    {
+        return $this->belongsToMany(Element::class, '_link_actions_elements');
+    }
+
+    public function investments()
+    {
+        return $this->belongsToMany(Investment::class, '_link_actions_investments');
+    }
+
+    public function main_actions()
+    {
+        return $this->belongsToMany(MainAction::class, '_link_actions_main_actions');
+    }
+
 
 
     /*

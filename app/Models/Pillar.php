@@ -34,9 +34,9 @@ class Pillar extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function csaframeworks()
+    public function actions()
     {
-        return $this->belongsToMany(CsaFramework::class, '_link_csa_frameworks_pillars');
+        return $this->belongsToMany(Action::class, '_link_actions_pillars');
     }
 
     /*

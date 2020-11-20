@@ -1,7 +1,7 @@
 @extends(backpack_view('layouts.plain'))
 
-
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-4">
@@ -43,9 +43,9 @@
                             <label class="control-label" for="team_confirmation">Team</label>
 
                             <div>
-                                <select class="selectpicker form-control{{ $errors->has('team_confirmation') ? ' is-invalid' : '' }}" multiple>
+                                <select name="teams[]"  multiple="multiple" class="form-control{{ $errors->has('team_confirmation') ? ' is-invalid' : '' }}">
                                     @foreach ($teams as $team)
-                                        <option>{{ $team->name }}</option>
+                                        <option value={{ $team->id }}>{{  $team->name  }}</option>
                                     @endforeach       
                                 </select>
 
@@ -103,7 +103,10 @@
         </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 @endsection
 <script>
-    $('select').select2();
+    $(document).ready(function() {
+    $('.form-control').select2();
+});
 </script>

@@ -19,8 +19,8 @@ class CreateIndicatorValuesTable extends Migration
             $table->decimal('value');
             $table->string('url_source')->nullable();
             $table->string('file_source')->nullable();
-            $table->foreignId('indicator_status_id')->constrained('indicators_status')->onDelete('cascade');
-            $table->foreignId('disaggregation_id')->constrained('disaggregations')->onDelete('cascade');
+            $table->foreignId('indicator_status_id');
+            $table->foreignId('disaggregation_id');
             $table->timestamps();
         });
     }

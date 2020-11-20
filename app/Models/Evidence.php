@@ -34,9 +34,9 @@ class Evidence extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function effect()
+    public function effects()
     {
-        return $this->belongsTo(Effect::class, 'effect_id');
+        return $this->hasMany(Effect::class);
     }
 
     /*

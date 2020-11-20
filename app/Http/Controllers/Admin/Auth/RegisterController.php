@@ -17,6 +17,7 @@ class RegisterController extends BackpackRegisterController
      */
     protected function validator(array $data)
     {
+       
         $user_model_fqn = config('backpack.base.user_model_fqn');
         $user = new $user_model_fqn();
         $users_table = $user->getTable();
@@ -26,6 +27,7 @@ class RegisterController extends BackpackRegisterController
             'name'                             => 'required|max:255',
             backpack_authentication_column()   => 'required|'.$email_validation.'max:255|unique:'.$users_table,
             'password'                         => 'required|min:6|confirmed',
+            // 'teams'                            => 'required'
         ]);
     
     }
@@ -41,12 +43,19 @@ class RegisterController extends BackpackRegisterController
     {
         $user_model_fqn = config('backpack.base.user_model_fqn');
         $user = new $user_model_fqn();
-
-        return $user->create([
+        // dd($data->teams);
+    
+     
+        $user->create([
             'name'                             => $data['name'],
             backpack_authentication_column()   => $data[backpack_authentication_column()],
             'password'                         => bcrypt($data['password']),
         ]);
+
+        // $user->teams()->sync($data['teams']); 
+        
+
+        return  $user;
     }
 
     public function showRegistrationForm()

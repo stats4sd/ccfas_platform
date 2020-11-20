@@ -34,9 +34,9 @@ class Practice extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function csaframeworks()
+    public function actions()
     {
-        return $this->belongsToMany(CsaFramework::class, '_link_csa_frameworks_practices');
+        return $this->belongsToMany(Action::class, '_link_actions_practices');
     }
 
     /*

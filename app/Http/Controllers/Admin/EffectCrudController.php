@@ -9,9 +9,16 @@ use App\Models\Indicator;
 use App\Models\Beneficiary;
 use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
+use App\Models\LevelAttribution;
+use App\Models\LinkEffectIndicator;
 use App\Http\Requests\EffectRequest;
+use App\Models\Change;
+use App\Models\Disaggregation;
+use App\Models\IndicatorStatus;
+
 use function GuzzleHttp\json_decode;
 
+use Illuminate\Support\Facades\Auth;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -50,6 +57,19 @@ class EffectCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        $this->crud->addFilter([ 
+            'type'  => 'simple',
+            'name'  => 'team_id',
+            'label' => 'Team'
+          ],
+          false,
+          function() { 
+            $teams = backpack_user()->teams;
+            
+            $this->crud->addClause('whereIn', 'team_id', $teams); 
+       
+        });
+
         $this->crud->addColumns([
             [
                 'label'     => "Team",
@@ -123,18 +143,38 @@ class EffectCrudController extends CrudController
                 'type'  => 'repeatable',
                 'fields' => [
                     [
-                        'type' => "relationship",
-                        'name' => 'indicators',
-                        'ajax' => true,
-                        'minimum_input_length' => 0,
-                        'inline_create' => [ 'entity' => 'indicator' ],
-                        'placeholder' => "Select a indicator",
+                        'name'    => 'indicator_id',
+                        'type' => "select_from_array",
+                        'label' => 'Indicator ',
                       
+                        // optional - force the related options to be a custom query, instead of all();
+                        'options'   => $this->getIndicators(),     
+                      
+                    ],
+                    [
+                        'name'    => 'level_attribution_id',
+                        'type' => "select_from_array",
+                        'label' => 'level attribution',
+                      
+                        // optional - force the related options to be a custom query, instead of all();
+                        'options'   => $this->getLevelAttributions(),     
                     ],
                     [
                         'name'    => 'ind_value',
                         'type'    => 'number',
                         'label'   => 'Indicator Value',
+                       
+                    ],
+                    [
+                        'name'    => 'qualitative',
+                        'type'    => 'text',
+                        'label'   => 'Indicator change qualitative',
+                       
+                    ],
+                    [
+                        'name'    => 'quantitative',
+                        'type'    => 'text',
+                        'label'   => 'Indicator change quantitative',
                        
                     ],
                     [
@@ -144,9 +184,9 @@ class EffectCrudController extends CrudController
                        
                     ],
                     [   // Upload
-                        'name'      => 'ind_file_source',
+                        'name'      => 'file_source',
                         'label'     => 'Indicators File Source',
-                        'type'      => 'upload_multiple',
+                        'type'      => 'upload',
                         'upload'    => true,
                         'disk'      => 'public', 
                     ],
@@ -154,9 +194,9 @@ class EffectCrudController extends CrudController
                         'name'    => 'indicator_status_id',
                         'type' => "select_from_array",
                         'label' => 'Indicator Status',
-                      
+                     
                         // optional - force the related options to be a custom query, instead of all();
-                        'options'   => ['opnion1', 'opnion2'],     
+                        'options'   =>  $this->getIndicatorStatus(),
                     ],
                     [
                         'name'    => 'disaggregation_id',
@@ -164,7 +204,7 @@ class EffectCrudController extends CrudController
                         'label' => 'Disaggregation',
                       
                         // optional - force the related options to be a custom query, instead of all();
-                        'options'   => ['opnion1', 'opnion2'],     
+                        'options'   => $this->getDisaggregations(),   
                     ]
                    
                     
@@ -180,27 +220,27 @@ class EffectCrudController extends CrudController
                 'type'  => 'repeatable',
                 'fields' => [
                     [
-                        'name'    => 'evid_description',
+                        'name'    => 'description',
                         'type'    => 'text',
                         'label'   => 'evidences desciption',                       
                     ],  
                     [
-                        'name'    => 'evid_file_description',
+                        'name'    => 'files_description',
                         'type'    => 'text',
                         'label'   => 'file desciption',
                        
                     ],    
                     [   // Upload
-                        'name'      => 'evid_file',
+                        'name'      => 'file',
                         'label'     => 'Evidence File',
-                        'type'      => 'upload_multiple',
+                        'type'      => 'upload',
                         'upload'    => true,
                         'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
                     ],
                     [
-                        'name'    => 'ind_url_source',
+                        'name'    => 'url',
                         'type'    => 'url',
-                        'label'   => 'Indicators url Source',
+                        'label'   => 'Evidence url Source',
                        
                     ],
                     
@@ -208,7 +248,8 @@ class EffectCrudController extends CrudController
             
                 // optional
                 'new_item_label'  => 'Add Evidences', // customize the text of the button
-                
+              
+               
             ],
 
             [   // repeatable beneficiaries
@@ -217,21 +258,21 @@ class EffectCrudController extends CrudController
                 'type'  => 'repeatable',
                 'fields' => [
                     [
-                        'name'    => 'benef_description',
+                        'name'    => 'description',
                         'type'    => 'text',
-                        'label'   => 'Benficiaries desciption',
+                        'label'   => 'Benficiaries description',
                        
                     ],                
                     [
-                        'name'    => 'benef_type',
+                        'name'    => 'beneficiary_type_id',
                         'type' => "select_from_array",
                         'label' => 'beneficiary type',
+                        'allows_null' => false,
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getBeneficieryTypes(),     
                     ]
                 
-                    
                 ],
             
                 // optional
@@ -262,10 +303,33 @@ class EffectCrudController extends CrudController
         return $this->fetch(Action::class);
     }
 
+
     public function getBeneficieryTypes()
     {
         return BeneficiaryType::get()->pluck('name','id');
     }
+
+    public function getIndicators()
+    {
+       return Indicator::get()->pluck('name','id');
+    }
+
+    public function getLevelAttributions()
+    {
+       return LevelAttribution::get()->pluck('name','id');
+    }
+    
+    public function getIndicatorStatus()
+    {
+       return IndicatorStatus::get()->pluck('name','id');
+    }
+
+    public function getDisaggregations()
+    {
+       return Disaggregation::get()->pluck('name','id');
+    }
+    
+    
 
     public function store(EffectRequest $request)
     {
@@ -273,47 +337,80 @@ class EffectCrudController extends CrudController
       // do something before validation, before save, before everything
 
      
-          $response = $this->traitStore();
-          $effect = $this->crud->getCurrentEntry();
-
+        $response = $this->traitStore();
+        $effect = $this->crud->getCurrentEntry();
+     
+        $indicator_repeat = json_decode($request->indicator_repeat);
        
-        // //Indicator repeat
-        // $indicator_repeat = json_decode($request->indicator_repeat);
-        
-        // foreach($indicator_repeat as $indicator ){
-        //   //problem with file
-        //     $indicator_value = IndicatorValue::create([
-        //         'value' => $indicator->ind_value,
-        //         'url_source' => $indicator->ind_url_source,
-        //         // 'file_source' => $indicator[ind_file_source[]],
-        //         'indicator_status_id' => $indicator->indicator_status_id,
-        //         'disaggregation_id'=> $indicator->disaggregation_id
-        //     ]);
+        foreach($indicator_repeat as $indicator ){
+
+            // $effect_attribute = $effect->indicators()->attach($indicator->indicator_id, array('level_attribution_id'=>$indicator->level_attribution_id));
+            $effect_indicator = LinkEffectIndicator::create([
+                'effect_id' => $effect->id,
+                'indicator_id' => $indicator->indicator_id,
+                'level_attribution_id' => $indicator->level_attribution_id,
+            ]);
+
+          //problem with file
+            $indicator_value = IndicatorValue::create([
+                'link_effect_indicator_id' => $effect_indicator->id,
+                'value' => $indicator->ind_value,
+                'url_source' => $indicator->ind_url_source,
+                'file_source' => $indicator->file_source,
+                'indicator_status_id' => $indicator->indicator_status_id,
+                'disaggregation_id'=> $indicator->disaggregation_id
+            ]);
     
-        //     $indicator_value->save();
-           
-        // }
+            $indicator_value->save();
 
-        // //Evidence repeat
-        // $evidence_repeat = json_decode($request->evidence_repeat);
+            if(!empty($indicator->qualitative) || !empty($indicator->quantitative)){
+                $change = Change::create([
+                    'link_effect_indicator_id' => $effect_indicator->id,
+                    'qualitative' => $indicator->qualitative,
+                    'quantitative' => $indicator->quantitative ,
+                ]);
+            }
+           
+        }
+
+        //Evidence repeat
+        $evidence_repeat = json_decode($request->evidencies_repeat);
         
-        // foreach($evidence_repeat as $evid ){
-        //   //problem with file
-        //     $evidence = Evidence::create([
-        //         'effect_id' => $evidence_repeat->ind_value,
-        //         'url_source' => $indicator_value->ind_url_source,
-        //         // 'file_source' => $indicator_value[ind_file_source[]],
-        //         'indicator_status_id' => $indicator_value->indicator_status_id,
-        //         'disaggregation_id'=> $indicator_value->disaggregation_id
-        //     ]);
+        foreach($evidence_repeat as $evidence ){
+          //problem with file
+            if(!empty($evidence->description)){
+            $new_evidence = Evidence::create([
+                'effect_id' =>  $effect->id,
+                'description' => $evidence->description,
+                'file' => $evidence->file,
+                'urls' => $evidence->url,
+                'files_description' => $evidence->files_description
+            ]);
     
-        //     $indicator_value->save();
+            $new_evidence->save();
+            }
            
-        // }
+        }
 
-
+         //Beneficiries repeat
+         $beneficiaries_repeat = json_decode($request->beneficiaries_repeat);
         
-
+         foreach($beneficiaries_repeat as $beneficiary ){
+           //problem with file
+            if(!empty($beneficiary->description)){
+                $new_beneficiary  = Beneficiary::create([
+                    'effect_id' =>  $effect->id,
+                    'description' => $beneficiary->description,
+                    'beneficiary_type_id' => $beneficiary->beneficiary_type_id,
+                
+                ]);
+        
+                $new_beneficiary->save();
+            }
+            
+         }
+ 
+ 
         // do something after save
         return $response;
     }

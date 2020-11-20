@@ -42,12 +42,12 @@ class Effect extends Model
 
     public function indicators()
     {
-        return $this->belongsToMany(Indicator::class, '_link_effects_indicators','effect_id', 'indicator_id');
+        return $this->belongsToMany(Indicator::class, '_link_effects_indicators','effect_id', 'indicator_id')->withPivot('level_attribution_id')->withTimestamps();
     }
 
-    public function evidences()
+    public function evidence()
     {
-        return $this->hasMany(Evidence::class);
+        return $this->belongsTo(Evidence::class);
     }
 
     public function beneficiaries()

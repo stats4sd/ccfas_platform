@@ -34,9 +34,9 @@ class Investment extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function csaframeworks()
+    public function actions()
     {
-        return $this->belongsToMany(CsaFramework::class, '_link_csa_frameworks_investments');
+        return $this->belongsToMany(Action::class, '_link_actions_investments');
     }
 
     /*

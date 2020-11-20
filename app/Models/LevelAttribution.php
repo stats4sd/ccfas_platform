@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class Element extends Model
+class LevelAttribution extends Model
 {
     use CrudTrait;
 
@@ -15,7 +15,7 @@ class Element extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'elements';
+    protected $table = 'level_attributions';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -34,11 +34,6 @@ class Element extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    
-    public function actions()
-    {
-        return $this->belongsToMany(Action::class, '_link_actions_elements');
-    }
 
     /*
     |--------------------------------------------------------------------------

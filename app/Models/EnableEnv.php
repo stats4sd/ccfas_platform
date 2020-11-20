@@ -34,9 +34,9 @@ class EnableEnv extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function csaframeworks()
+    public function actions()
     {
-        return $this->belongsToMany(CsaFramework::class, '_link_csa_frameworks_enable_envs');
+        return $this->belongsToMany(Action::class, '_link_actions_enable_envs');
     }
 
     /*

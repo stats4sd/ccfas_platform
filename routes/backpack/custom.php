@@ -42,4 +42,8 @@ Route::group([
     Route::crud('investment', 'InvestmentCrudController');
     Route::crud('mainaction', 'MainActionCrudController');
     Route::crud('enableenv', 'EnableEnvCrudController');
+    Route::crud('levelattribution', 'LevelAttributionCrudController');
+    Route::crud('linkeffectindicator', 'LinkEffectIndicatorCrudController');
+    Route::crud('disaggregation', 'DisaggregationCrudController');
+    Route::crud('change', 'ChangeCrudController');
 }); // this should be the absolute last line of this file
