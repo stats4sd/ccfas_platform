@@ -43,7 +43,7 @@
                             <label class="control-label" for="team_confirmation">Team</label>
 
                             <div>
-                                <select name="teams[]"  multiple="multiple" class="form-control{{ $errors->has('team_confirmation') ? ' is-invalid' : '' }}">
+                                <select name="teams[]"  multiple="multiple" class="select2 form-control{{ $errors->has('team_confirmation') ? ' is-invalid' : '' }}">
                                     @foreach ($teams as $team)
                                         <option value={{ $team->id }}>{{  $team->name  }}</option>
                                     @endforeach       
@@ -103,10 +103,12 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 @endsection
+@section('after_scripts')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-    $('.form-control').select2();
+    $('.select2').select2();
 });
 </script>
+@endsection

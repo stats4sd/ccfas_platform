@@ -1,7 +1,8 @@
 <!-- This file is used to store sidebar items, starting with Backpack\Base 0.9.0 -->
 <!-- <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i> {{ trans('backpack::base.dashboard') }}</a></li> -->
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('effect?team_id=true') }}'><i class='nav-icon la la-question'></i> Effects</a></li>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('action?team_id=true') }}'><i class='nav-icon la la-question'></i> Actions</a></li>
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('effect?team_id=true') }}'><i class='fas fa-fire'></i> Effects</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('action?team_id=true') }}'><i class='fas fa-compass'></i> Actions</a></li>
 @if (backpack_user()->email=='lucia@stats4sd.org')
 
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='nav-icon la la-question'></i> Users</a></li>

@@ -18,6 +18,9 @@ class CreateLinkEffectsIndicatorsTable extends Migration
             $table->foreignId('effect_id')->constrained()->onDelete('cascade');
             $table->foreignId('indicator_id')->constrained()->onDelete('cascade');
             $table->foreignId('level_attribution_id')->constrained('level_attributions')->onDelete('cascade');
+            $table->decimal('baseline_quantitative')->nullable();
+            $table->string('baseline_qualitative')->nullable();
+            
             $table->timestamps();
         });
     }

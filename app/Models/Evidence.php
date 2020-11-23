@@ -36,7 +36,7 @@ class Evidence extends Model
     */
     public function effects()
     {
-        return $this->hasMany(Effect::class);
+        return $this->belongsTo(Effect::class);
     }
 
     /*

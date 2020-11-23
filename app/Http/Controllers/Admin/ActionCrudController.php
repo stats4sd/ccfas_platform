@@ -131,6 +131,7 @@ class ActionCrudController extends CrudController
                 'minimum_input_length' => 0,
                 'inline_create' => [ 'entity' => 'geoboundary' ],
                 'placeholder' => "Select an Geo Boundaries",  
+                'label' => 'Describe the boundaries of the geographic area where the action has taken place.'
               
             ],
             [
@@ -139,19 +140,19 @@ class ActionCrudController extends CrudController
                 'ajax' => true,
                 'minimum_input_length' => 0,
                 'inline_create' => [ 'entity' => 'aim' ],
-                'placeholder' => "Select an Aim",
+                'placeholder' => "What did you seek to achieve through this action",
               
             ],
             [
                 'type' => "relationship",
                 'name' => 'scopes',
-                'placeholder' => "Select an Scope",
+                'placeholder' => "How would you describe the intended scope of the action?",
                 
             ],
             [
                 'type' => "relationship",
                 'name' => 'ipflows',
-                'placeholder' => "Select an Ipflow",
+                'placeholder' => "In which part of the IP flow is the action taking place?",
                 
             ],
             [

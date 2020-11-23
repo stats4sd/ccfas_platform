@@ -28,7 +28,6 @@ class EffectRequest extends FormRequest
         return [
             'team_id' => 'required',
             'description' => 'required',
-            'actions' => 'required',
         ];
     }
 

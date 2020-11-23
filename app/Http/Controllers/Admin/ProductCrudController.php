@@ -76,7 +76,7 @@ class ProductCrudController extends CrudController
                 'type' => "relationship",
                 'name' => 'product_type_id',
                 // OPTIONALS:
-                'label' => "Product Type",
+                'label' => "What specific products are expected from this work?",
                 'attribute' => "name", 
                 'entity' => 'product_type',
                 'model' => "App\Models\ProductType",

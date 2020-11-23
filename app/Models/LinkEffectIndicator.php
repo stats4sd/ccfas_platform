@@ -34,6 +34,10 @@ class LinkEffectIndicator extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function effect()
+    {
+        return $this->belongsTo(Effect::class);
+    }
 
     /*
     |--------------------------------------------------------------------------

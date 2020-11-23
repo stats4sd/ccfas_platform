@@ -32,7 +32,7 @@ class EffectCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
@@ -121,83 +121,108 @@ class EffectCrudController extends CrudController
                 'type'          => 'textarea',
 
             ],
-            [
-                'type' => "relationship",
-                'name' => 'actions',
-                'ajax' => true,
-                'minimum_input_length' => 0,
-                'inline_create' => [ 'entity' => 'action' ],
-                'placeholder' => "Select an Action",
-               
-              
-            ],
             [   // repeatable
                 'name'  => 'indicator_repeat',
-                'label' => 'This section collects information about indicators that measure the effect you have described. 
+                'label' => '<p>This section collects information about indicators that measure the effect you have described.</p>
 
-                If you are using one of the commonly used indicators provided, please select it. If you are using a different indicator, please describe it.
+                <p>If you are using one of the commonly used indicators provided, please select it. If you are using a different indicator, please describe it.</p>
                 
-                You have freedom to use what you consider are the best indicators that provide the required evidence.
+                <p>You have freedom to use what you consider are the best indicators that provide the required evidence.</p>
                 
-                If there is more than one indicator, please click on the "+ Add Indicator" sign to add space for a new indicator. You can enter as many as you need.',
+                <p>If there is more than one indicator, please click on the "+ Add Indicator" sign to add space for a new indicator. You can enter as many as you need.</p>',
                 'type'  => 'repeatable',
                 'fields' => [
+                
                     [
-                        'name'    => 'indicator_id',
-                        'type' => "select_from_array",
-                        'label' => 'Indicator ',
+                        'name'  => 'indicator_label',
+                        'type'  => 'custom_html',
+                        'value' => '<h6><b>Indicator definition</b></h6><p>Please provide a full definition and if available a reference to a standard definition for this indicator.
+                         This should include how the indicator is calculated and how the data is obtained.</p>
+                         <p><b>We could break this down into more specific questions, but I am not sure if this would not impose a burden that is to high on the respondents</b></p>'
+                    ],
+                    // [
+                    //     'name'    => 'indicator_id',
+                    //     'type' => "select_from_array",
+                    //     'label' => 'Indicator ',
                       
-                        // optional - force the related options to be a custom query, instead of all();
-                        'options'   => $this->getIndicators(),     
+                    //     // optional - force the related options to be a custom query, instead of all();
+                    //     'options'   => $this->getIndicators(),     
                       
+                    // ],
+                    [
+                        'type' => "relationship",
+                        'name' => 'indicators',
+                        'ajax' => true,
+                        'minimum_input_length' => 0,
+                        'inline_create' => [ 'entity' => 'indicator' ],
+                        'placeholder' => "Select an Indicator",
+                        'label' =>'Select the indicator from the list. If it does not exist yet, please click on “+ Other” to add it.',
+                        'multiple'=>false
                     ],
                     [
-                        'name'    => 'level_attribution_id',
-                        'type' => "select_from_array",
-                        'label' => 'level attribution',
-                      
-                        // optional - force the related options to be a custom query, instead of all();
-                        'options'   => $this->getLevelAttributions(),     
+                        'name'    => 'value_qualitative',
+                        'type'    => 'text',
+                        'label'   => 'If the indicator you have chosen is qualitative, please describe that changes captures the size of effect you are reporting. This is how the indicator “changed” from its original condition',
+                     
                     ],
                     [
-                        'name'    => 'ind_value',
+                        'name'    => 'baseline_qualitative',
+                        'type'   =>'text',
+                        'label' => 'If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?<p></p><p></p>',
+                     
+                    ],
+                    [
+                        'name'    => 'value_quantitative',
                         'type'    => 'number',
-                        'label'   => 'Indicator Value',
+                        'label'   => 'If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
+                        
+
+                    ],
+                    [
+                        'name'    => 'baseline_quantitative',
+                        'type'   =>'number',
+                        'label' => 'If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?',
+                       
                        
                     ],
                     [
-                        'name'    => 'qualitative',
-                        'type'    => 'text',
-                        'label'   => 'Indicator change qualitative',
-                       
-                    ],
-                    [
-                        'name'    => 'quantitative',
-                        'type'    => 'text',
-                        'label'   => 'Indicator change quantitative',
-                       
+                        'name' => 'effect_indicator_id',
+                        'type' => "hidden",
+                        'value' => null
+
                     ],
                     [
                         'name'    => 'ind_url_source',
-                        'type'    => 'url',
-                        'label'   => 'Indicators url Source',
+                        'type'    => 'text',
+                        'label'   => 'What was the source for this estimate of the indicator?
+                        <p>Please provide a source that can be referenced. If it is on-line, please provide a URL.</p>',
                        
                     ],
                     [   // Upload
                         'name'      => 'file_source',
-                        'label'     => 'Indicators File Source',
+                        'label'     => 'If you have a document that supports this indicator has evidence, you can upload it here.',
                         'type'      => 'upload',
                         'upload'    => true,
                         'disk'      => 'public', 
                     ],
                     [
-                        'name'    => 'indicator_status_id',
+                        'name'    => 'level_attribution_id',
                         'type' => "select_from_array",
-                        'label' => 'Indicator Status',
-                     
+                        'label' => 'What is the level of attribution to the change in the indicator due to the work described?',
+                      
                         // optional - force the related options to be a custom query, instead of all();
-                        'options'   =>  $this->getIndicatorStatus(),
+                        'options'   => $this->getLevelAttributions(),     
+                      
                     ],
+                    // [
+                    //     'name'    => 'indicator_status_id',
+                    //     'label' => 'Indicator Status',
+                     
+                    //     // optional - force the related options to be a custom query, instead of all();
+                    //     'options'   =>  $this->getIndicatorStatus(),
+                    // ],
+                   
+                    
                     [
                         'name'    => 'disaggregation_id',
                         'type' => "select_from_array",
@@ -205,6 +230,7 @@ class EffectCrudController extends CrudController
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getDisaggregations(),   
+                        'default'   => null,
                     ]
                    
                     
@@ -220,9 +246,15 @@ class EffectCrudController extends CrudController
                 'type'  => 'repeatable',
                 'fields' => [
                     [
+                        'name' => 'id',
+                        'type' => "hidden",
+                        'value' => null
+
+                    ],
+                    [
                         'name'    => 'description',
                         'type'    => 'text',
-                        'label'   => 'evidences desciption',                       
+                        'label'   => 'Evidence desciption',                       
                     ],  
                     [
                         'name'    => 'files_description',
@@ -258,26 +290,53 @@ class EffectCrudController extends CrudController
                 'type'  => 'repeatable',
                 'fields' => [
                     [
-                        'name'    => 'description',
-                        'type'    => 'text',
-                        'label'   => 'Benficiaries description',
-                       
-                    ],                
+                        'name' => 'id',
+                        'type' => "hidden",
+                        'value' => null
+
+                    ],
                     [
                         'name'    => 'beneficiary_type_id',
                         'type' => "select_from_array",
-                        'label' => 'beneficiary type',
+                        'label' => 'Beneficiary type',
                         'allows_null' => false,
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getBeneficieryTypes(),     
-                    ]
-                
+                    ],
+                    [
+                        'name'    => 'description',
+                        'type'    => 'textarea',
+                        'label'   => 'Benficiaries description',
+                       
+                    ],                
+                    
                 ],
             
                 // optional
                 'new_item_label'  => 'Add Beneficiary', // customize the text of the button
                 
+            ],
+            [
+                'name'  => 'action_label',
+                'type'  => 'custom_html',
+                'value' => '<h6><b>Action</b></h6>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope
+
+                This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture. Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up.'
+               
+              
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'actions',
+                'ajax' => true,
+                'minimum_input_length' => 0,
+                'inline_create' => [ 'entity' => 'action' ],
+                'placeholder' => "Select an Action",
+                'label' =>''
+           
+               
+              
             ],
         ]);
     }
@@ -336,32 +395,37 @@ class EffectCrudController extends CrudController
 
       // do something before validation, before save, before everything
 
-     
         $response = $this->traitStore();
         $effect = $this->crud->getCurrentEntry();
-     
         $indicator_repeat = json_decode($request->indicator_repeat);
-       
+      
         foreach($indicator_repeat as $indicator ){
 
             // $effect_attribute = $effect->indicators()->attach($indicator->indicator_id, array('level_attribution_id'=>$indicator->level_attribution_id));
-            $effect_indicator = LinkEffectIndicator::create([
-                'effect_id' => $effect->id,
-                'indicator_id' => $indicator->indicator_id,
-                'level_attribution_id' => $indicator->level_attribution_id,
-            ]);
+           if(!empty($indicator->indicators)){
+                $effect_indicator = LinkEffectIndicator::create([
+                    'effect_id' => $effect->id,
+                    'indicator_id' => $indicator->indicators,
+                    'level_attribution_id' => $indicator->level_attribution_id,
+                    'baseline_quantitative' => $indicator->baseline_quantitative,
+                    'baseline_qualitative' => $indicator->baseline_qualitative
+                ]);
+           }
 
           //problem with file
+          if(!empty($indicator->value_qualitative) || !empty($indicator->value_quantitative) || !empty($indicator->ind_url_source) || !empty($indicator->file_source) || !empty($indicator->disaggregation_id)){
             $indicator_value = IndicatorValue::create([
                 'link_effect_indicator_id' => $effect_indicator->id,
-                'value' => $indicator->ind_value,
+                'value_qualitative' => $indicator->value_qualitative,
+                'value_quantitative' => $indicator->value_quantitative,
                 'url_source' => $indicator->ind_url_source,
                 'file_source' => $indicator->file_source,
-                'indicator_status_id' => $indicator->indicator_status_id,
+                // 'indicator_status_id' => $indicator->indicator_status_id,
                 'disaggregation_id'=> $indicator->disaggregation_id
             ]);
     
             $indicator_value->save();
+          }
 
             if(!empty($indicator->qualitative) || !empty($indicator->quantitative)){
                 $change = Change::create([
@@ -413,6 +477,94 @@ class EffectCrudController extends CrudController
  
         // do something after save
         return $response;
+    }
+
+    public function update(EffectRequest $request)
+    {
+    
+
+        $response = $this->traitUpdate();
+        $effect = $this->crud->getCurrentEntry();
+          //Beneficiries repeat
+        $this->updateBeneficiary($request->beneficiaries_repeat, $effect->id);
+        $this->updateEvidence($request->evidencies_repeat, $effect->id);
+        $this->updateIndicator($request->indicator_repeat, $effect->id);
+         // do something after save
+        return $response;
+    }
+
+    public function updateIndicator($repeat, $effect_id)
+    {
+
+        $indicators_repeat = json_decode($repeat);
+        foreach($indicators_repeat as $indicator ){
+            $effect_indicator = LinkEffectIndicator::updateOrCreate(
+                [
+                    'id'=> $indicator->effect_indicator_id,
+                ],
+                [
+                    'effect_id' => $effect_id,
+                    'indicator_id' => $indicator->indicators,
+                    'level_attribution_id' => $indicator->level_attribution_id,
+                    'baseline_quantitative' => $indicator->baseline_quantitative,
+                    'baseline_qualitative' => $indicator->baseline_qualitative,
+                ]
+            );
+            $effect_indicator->save();
+        }
+        
+    }
+
+    public function updateBeneficiary($repeat, $effect_id)
+    {
+        $beneficiaries_repeat = json_decode($repeat);
+    
+        foreach($beneficiaries_repeat as $beneficiary ){
+        //problem with file
+            if(!empty($beneficiary->description)){
+                $new_beneficiary  = Beneficiary::updateOrCreate(
+                    [
+                    'id' => $beneficiary->id
+                    ],
+                    [
+                    'effect_id' =>  $effect_id,
+                    'description' => $beneficiary->description,
+                    'beneficiary_type_id' => $beneficiary->beneficiary_type_id,
+                    ]
+                
+                );
+        
+                $new_beneficiary->save();
+            }
+            
+        }
+    }
+
+    public function updateEvidence($repeat, $effect_id)
+    {
+        $evidence_repeat = json_decode($repeat);
+    
+        foreach($evidence_repeat as $evidence ){
+        //problem with file
+            if(!empty($evidence->description)){
+                $new_evidence  = Evidence::updateOrCreate(
+                    [
+                    'id' => $evidence->id
+                    ],
+                    [
+                        'effect_id' =>  $effect_id,
+                        'description' => $evidence->description,
+                        'file' => $evidence->file,
+                        'urls' => $evidence->url,
+                        'files_description' => $evidence->files_description
+                    ]
+                
+                );
+        
+                $new_evidence->save();
+            }
+            
+        }
     }
 
    
