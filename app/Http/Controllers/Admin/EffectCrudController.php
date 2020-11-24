@@ -156,32 +156,38 @@ class EffectCrudController extends CrudController
                         'minimum_input_length' => 0,
                         'inline_create' => [ 'entity' => 'indicator' ],
                         'placeholder' => "Select an Indicator",
-                        'label' =>'Select the indicator from the list. If it does not exist yet, please click on “+ Other” to add it.',
+                        'label' =>'I.1 Select the indicator from the list. If it does not exist yet, please click on “+ Other” to add it.',
                         'multiple'=>false
                     ],
                     [
                         'name'    => 'value_qualitative',
                         'type'    => 'text',
-                        'label'   => 'If the indicator you have chosen is qualitative, please describe that changes captures the size of effect you are reporting. This is how the indicator “changed” from its original condition',
+                        'label'   => 'I.2 If the indicator you have chosen is qualitative, please describe that changes captures the size of effect you are reporting. This is how the indicator “changed” from its original condition',
                      
                     ],
                     [
                         'name'    => 'baseline_qualitative',
                         'type'   =>'text',
-                        'label' => 'If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?<p></p><p></p>',
+                        'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status at baseline?<p></p>',
                      
+                    ],
+                    [   // CustomHTML
+                        'name'  => 'separator',
+                        'type'  => 'custom_html',
+                        'value' => '<hr>'
                     ],
                     [
                         'name'    => 'value_quantitative',
                         'type'    => 'number',
-                        'label'   => 'If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
+                        'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
                         
 
                     ],
+                  
                     [
                         'name'    => 'baseline_quantitative',
                         'type'   =>'number',
-                        'label' => 'If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?',
+                        'label' => 'I.3.1 If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?',
                        
                        
                     ],
@@ -194,13 +200,13 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'ind_url_source',
                         'type'    => 'text',
-                        'label'   => 'What was the source for this estimate of the indicator?
-                        <p>Please provide a source that can be referenced. If it is on-line, please provide a URL.</p>',
+                        'label'   => 'I.4 What was the source for this estimate of the indicator?
+                        <p>I.4.1 Please provide a source that can be referenced. If it is on-line, please provide a URL.</p>',
                        
                     ],
                     [   // Upload
                         'name'      => 'file_source',
-                        'label'     => 'If you have a document that supports this indicator has evidence, you can upload it here.',
+                        'label'     => 'I.4.2 If you have a document that supports this indicator us evidence, you can upload it here.',
                         'type'      => 'upload',
                         'upload'    => true,
                         'disk'      => 'public', 
@@ -208,7 +214,7 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'level_attribution_id',
                         'type' => "select_from_array",
-                        'label' => 'What is the level of attribution to the change in the indicator due to the work described?',
+                        'label' => 'I.5 What is the level of attribution to the change in the indicator due to the work described?',
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getLevelAttributions(),     
@@ -225,8 +231,8 @@ class EffectCrudController extends CrudController
                     
                     [
                         'name'    => 'disaggregation_id',
-                        'type' => "select_from_array",
-                        'label' => 'Disaggregation',
+                        'type' => "select2_from_array",
+                        'label' => 'I.6 If you can disaggregate this indicator, please indicate the criteria it can be disaggregated by',
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getDisaggregations(),   
@@ -240,9 +246,16 @@ class EffectCrudController extends CrudController
                 'new_item_label'  => 'Add Indicator', // customize the text of the button
                 
             ],
+            [   // CustomHTML
+                'name'  => 'separator',
+                'type'  => 'custom_html',
+                'value' => '<h6><b>Evidence</b></h6><p> Here you will enter any links (URLs) to supporting documents/sites for the evidence you have provided. If you need to add more than one link, press the "+" sign.</p>'
+            ],
+            
+            
             [   // repeatable evidencies
                 'name'  => 'evidencies_repeat',
-                'label' => 'Evidence',
+                'label' => '',
                 'type'  => 'repeatable',
                 'fields' => [
                     [
@@ -254,39 +267,39 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'description',
                         'type'    => 'text',
-                        'label'   => 'Evidence desciption',                       
+                        'label'   => 'E.1 Evidence desciption',                       
                     ],  
                     [
                         'name'    => 'files_description',
                         'type'    => 'text',
-                        'label'   => 'file desciption',
+                        'label'   => 'E.2 file desciption',
                        
                     ],    
                     [   // Upload
                         'name'      => 'file',
-                        'label'     => 'Evidence File',
-                        'type'      => 'upload',
+                        'label'     => 'E.3 Evidence File',
+                        'type'      => 'upload_multiple',
                         'upload'    => true,
                         'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
                     ],
                     [
                         'name'    => 'url',
                         'type'    => 'url',
-                        'label'   => 'Evidence url Source',
+                        'label'   => 'E.4 Evidence url Source',
                        
                     ],
                     
                 ],
             
                 // optional
-                'new_item_label'  => 'Add Evidences', // customize the text of the button
+                'new_item_label'  => 'Add Evidence', // customize the text of the button
               
                
             ],
 
             [   // repeatable beneficiaries
                 'name'  => 'beneficiaries_repeat',
-                'label' => 'Beneficiaries',
+                'label' => 'About the Beneficiaries',
                 'type'  => 'repeatable',
                 'fields' => [
                     [
@@ -298,7 +311,7 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'beneficiary_type_id',
                         'type' => "select_from_array",
-                        'label' => 'Beneficiary type',
+                        'label' => 'B.1 Beneficiary type',
                         'allows_null' => false,
                       
                         // optional - force the related options to be a custom query, instead of all();
@@ -307,7 +320,7 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'description',
                         'type'    => 'textarea',
-                        'label'   => 'Benficiaries description',
+                        'label'   => 'B.2 Benficiaries description',
                        
                     ],                
                     
@@ -317,14 +330,28 @@ class EffectCrudController extends CrudController
                 'new_item_label'  => 'Add Beneficiary', // customize the text of the button
                 
             ],
+            [   // CustomHTML
+                'name'  => 'separator_action',
+                'type'  => 'custom_html',
+                'value' => '<hr>'
+            ],
             [
                 'name'  => 'action_label',
                 'type'  => 'custom_html',
-                'value' => '<h6><b>Action</b></h6>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope
+                'value' => '<h6><b>About the Action that generates the reported effect.</b></h6>
+                <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope
 
-                This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture. Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up.'
+                This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture. 
+                Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up.</p>
+                <p>In the box below you can select an action that you have already escribed. If you want to describe a new action, please click on "+ Other"</p>
                
-              
+                <p>In this section you need to choose one of the following options</p>
+                <ol type="1">
+                    <li>If the action that is associated to the effect reported has already been described, choose it from the box below. </li>
+                    <li>If the action has not yet been described click on the “+ Other” button and describe it.</li>
+                </ol>
+                <p>Remember that you can also edit the description of an action by going to the Action menu item on the left column and then click on “Edit” for the chosen action.</p> 
+                 '
             ],
             [
                 'type' => "relationship",
