@@ -24,6 +24,7 @@ class Effect extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
+    protected $casts = ['file' => 'array', 'file' => 'array' ];
 
     /*
     |--------------------------------------------------------------------------
@@ -38,34 +39,33 @@ class Effect extends Model
                 'effect_indicator_id'=>$effect_indicator['id'],
                 'indicators'=>$effect_indicator['indicator_id'],
                 'level_attribution_id'=>$effect_indicator['level_attribution_id'],
-                // 'value_qualitative'=>$indicator_value['value_qualitative'],
-                // 'value_quantitative'=>$indicator_value['value_quantitative'],
                 'baseline_qualitative'=>$effect_indicator['baseline_qualitative'],
                 'baseline_quantitative'=>$effect_indicator['baseline_quantitative'],
-                // 'ind_url_source'=>$indicator_value['url_source'],
-                // 'file_source'=>$indicator_value['file_source'],
             ];
-        
    
         });
 
+        $indicators_edit = [];
+        foreach($effects_indicators as $effect_indicator){
 
-        // foreach($effects_indicators as $effect_indicator){
-                    
-        // $indicator_value = IndicatorValue::where('link_effect_indicator_id', '=', $effect_indicator['effect_indicator_id'])->first();
+        $indicator_values = IndicatorValue::where('link_effect_indicator_id', '=', $effect_indicator['effect_indicator_id'])->get();
 
-        //    $effect_indicator['value_qualitative'] = $indicator_value['value_quantitative']; 
-        //    $effect_indicator['value_qualitative'] = $indicator_value['value_qualitative'];
-        //    $effect_indicator['ind_url_source'] = $indicator_value['url_source'];
-        //    $effect_indicator['file_source'] = $indicator_value['file_source'];
-    
-           
-        // }
+            foreach($indicator_values as $indi_value){
         
-                //   dd($effects_indicators);
+                $effect_indicator['ind_value_id'] = $indi_value['id'];
+                $effect_indicator['value_quantitative'] = $indi_value['value_quantitative'];
+                $effect_indicator['value_qualitative'] = $indi_value['value_qualitative'];
+                $effect_indicator['ind_url_source'] = $indi_value['url_source'];
+                $effect_indicator['disaggregation_id[]'] = $indi_value['disaggregation_id'];
+                // $effect_indicator['file_source'] = $indi_value['file_source'];
+    
+            }
+            $indicators_edit[]= $effect_indicator;
 
-
-        return  $effects_indicators;        
+        }
+     
+      
+        return  $indicators_edit;        
     }
 
     public function getBeneficiariesRepeatAttribute()
@@ -137,4 +137,5 @@ class Effect extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
+
 }

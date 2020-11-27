@@ -14,6 +14,7 @@
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('output') }}'><i class='nav-icon la la-question'></i> Outputs</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('activity') }}'><i class='nav-icon la la-question'></i> Activities</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('subactivity') }}'><i class='nav-icon la la-question'></i> Subactivities</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('milestone') }}'><i class='nav-icon la la-question'></i> Milestones</a></li>
     </ul>
 </li>
 

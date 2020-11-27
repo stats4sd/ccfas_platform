@@ -15,6 +15,7 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
     Route::crud('effect', 'EffectCrudController');
+    Route::get('effect/save-and-create-action', 'EffectCrudController@saveAndCreateAction');
     Route::crud('action', 'ActionCrudController');
     Route::crud('indicator', 'IndicatorCrudController');
     Route::crud('indicatorstatus', 'IndicatorStatusCrudController');
@@ -46,4 +47,5 @@ Route::group([
     Route::crud('linkeffectindicator', 'LinkEffectIndicatorCrudController');
     Route::crud('disaggregation', 'DisaggregationCrudController');
     Route::crud('change', 'ChangeCrudController');
+    Route::crud('milestone', 'MilestoneCrudController');
 }); // this should be the absolute last line of this file

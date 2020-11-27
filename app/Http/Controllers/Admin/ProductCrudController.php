@@ -86,52 +86,52 @@ class ProductCrudController extends CrudController
             [
                 'type' => "text",
                 'name' => 'audience',  
-                'label' => 'Audience'
+                'label' => 'Describe the audience to whom the product is aimed '
             ],
             [
                 'type' => "number",
                 'name' => 'audience_size',  
-                'label' => 'Audience size'
+                'label' => 'Can you provide an indication of the number of users of this product that you confidently expect to have '
             ],
             [
                 'type' => "text",
                 'name' => 'publication',  
-                'label' => 'Publication'
+                'label' => 'If this product is published, where will it be published? '
             ],
             [
                 'type' => "text",
                 'name' => 'distribution',  
-                'label' => 'Distribution'
+                'label' => 'What is the mechanism or means of distribution of the product? '
             ],
             [
                 'type' => "date",
                 'name' => 'publication_date',  
-                'label' => 'Publication date'
+                'label' => 'Date when the product is/will be available '
             ],
             [
                 'type' => "url",
                 'name' => 'publication_url',  
-                'label' => 'Publication Url'
+                'label' => 'URL where the product can be found'
             ],
             [
                 'type' => "text",
                 'name' => 'partner',  
-                'label' => 'Partners'
+                'label' => 'Indicate any partners that have contributed to this specific product '
             ],
             [
                 'type' => "text",
                 'name' => 'info_hosted',  
-                'label' => 'Info Hosted'
+                'label' => 'If the product is "hosted" by an organisation or platform, please indicate who hosts the product '
             ],
             [
                 'type' => "url",
                 'name' => 'url',  
-                'label' => 'Url'
+                'label' => 'Please indicate the URL where the product is hosted if different from the one provided above '
             ],
             [
                 'type' => "text",
                 'name' => 'access_conditions',  
-                'label' => 'Access Conditions'
+                'label' => 'If there are any special conditions for accessing the product please describe them '
             ],
 
 

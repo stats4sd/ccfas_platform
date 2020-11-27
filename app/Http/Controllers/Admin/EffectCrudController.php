@@ -21,6 +21,7 @@ use function GuzzleHttp\json_decode;
 use Illuminate\Support\Facades\Auth;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * Class EffectCrudController
@@ -150,6 +151,12 @@ class EffectCrudController extends CrudController
                       
                     // ],
                     [
+                        'name' => 'ind_value_id',
+                        'type' => "hidden",
+                        'value' => null
+
+                    ],
+                    [
                         'type' => "relationship",
                         'name' => 'indicators',
                         'ajax' => true,
@@ -169,12 +176,13 @@ class EffectCrudController extends CrudController
                         'name'    => 'baseline_qualitative',
                         'type'   =>'text',
                         'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status at baseline?<p></p>',
+
                      
                     ],
                     [   // CustomHTML
                         'name'  => 'separator',
                         'type'  => 'custom_html',
-                        'value' => '<hr>'
+                        'value' => '<hr style="border: 1px solid #384c74;">'
                     ],
                     [
                         'name'    => 'value_quantitative',
@@ -218,6 +226,7 @@ class EffectCrudController extends CrudController
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getLevelAttributions(),     
+                       
                       
                     ],
                     // [
@@ -236,7 +245,9 @@ class EffectCrudController extends CrudController
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getDisaggregations(),   
-                        'default'   => null,
+                        'allows_multiple' => true,
+                        'allows_null' => true,
+                          
                     ]
                    
                     
@@ -257,6 +268,7 @@ class EffectCrudController extends CrudController
                 'name'  => 'evidencies_repeat',
                 'label' => '',
                 'type'  => 'repeatable',
+                'value'=>null,
                 'fields' => [
                     [
                         'name' => 'id',
@@ -294,8 +306,10 @@ class EffectCrudController extends CrudController
                 // optional
                 'new_item_label'  => 'Add Evidence', // customize the text of the button
               
-               
-            ],
+                ]   
+            ]);
+            
+            CRUD::addFields([ 
 
             [   // repeatable beneficiaries
                 'name'  => 'beneficiaries_repeat',
@@ -312,10 +326,11 @@ class EffectCrudController extends CrudController
                         'name'    => 'beneficiary_type_id',
                         'type' => "select_from_array",
                         'label' => 'B.1 Beneficiary type',
-                        'allows_null' => false,
+                        // 'allows_null' => true,
                       
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getBeneficieryTypes(),     
+                      
                     ],
                     [
                         'name'    => 'description',
@@ -333,7 +348,7 @@ class EffectCrudController extends CrudController
             [   // CustomHTML
                 'name'  => 'separator_action',
                 'type'  => 'custom_html',
-                'value' => '<hr>'
+                'value' => '<hr style="border: 1px solid #384c74;">'
             ],
             [
                 'name'  => 'action_label',
@@ -358,14 +373,22 @@ class EffectCrudController extends CrudController
                 'name' => 'actions',
                 'ajax' => true,
                 'minimum_input_length' => 0,
-                'inline_create' => [ 'entity' => 'action' ],
+                'inline_create' => [ 
+                    'entity' => 'action',
+                    'modal_class' => 'modal-dialog modal-xl', 
+                    ],
                 'placeholder' => "Select an Action",
-                'label' =>''
-           
-               
+                'label' =>'',
               
+
+            ],
+            [   // CustomHTML
+                'name'  => 'action_button',
+                'type'  => 'custom_html',
+                'value' => '<a style="float: right;" href="save-and-create-action" class="btn btn-primary" data-style="zoom-in"><i class="la la-plus"></i> New Action</a>'
             ],
         ]);
+      
     }
 
     /**
@@ -377,6 +400,15 @@ class EffectCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function saveAndCreateAction(EffectRequest $request)
+    {
+        #pass team
+       
+        $this->store($request);
+        $effect = $this->crud->getCurrentEntry();
+        return Redirect::to('action');
     }
 
     public function fetchIndicators()
@@ -414,8 +446,6 @@ class EffectCrudController extends CrudController
     {
        return Disaggregation::get()->pluck('name','id');
     }
-    
-    
 
     public function store(EffectRequest $request)
     {
@@ -427,9 +457,8 @@ class EffectCrudController extends CrudController
         $indicator_repeat = json_decode($request->indicator_repeat);
       
         foreach($indicator_repeat as $indicator ){
-
-            // $effect_attribute = $effect->indicators()->attach($indicator->indicator_id, array('level_attribution_id'=>$indicator->level_attribution_id));
-           if(!empty($indicator->indicators)){
+      
+            if(!empty($indicator->indicators)){
                 $effect_indicator = LinkEffectIndicator::create([
                     'effect_id' => $effect->id,
                     'indicator_id' => $indicator->indicators,
@@ -437,31 +466,26 @@ class EffectCrudController extends CrudController
                     'baseline_quantitative' => $indicator->baseline_quantitative,
                     'baseline_qualitative' => $indicator->baseline_qualitative
                 ]);
-           }
+
+                $effect_indicator->save();
+               
+            }
 
           //problem with file
-          if(!empty($indicator->value_qualitative) || !empty($indicator->value_quantitative) || !empty($indicator->ind_url_source) || !empty($indicator->file_source) || !empty($indicator->disaggregation_id)){
-            $indicator_value = IndicatorValue::create([
-                'link_effect_indicator_id' => $effect_indicator->id,
-                'value_qualitative' => $indicator->value_qualitative,
-                'value_quantitative' => $indicator->value_quantitative,
-                'url_source' => $indicator->ind_url_source,
-                'file_source' => $indicator->file_source,
-                // 'indicator_status_id' => $indicator->indicator_status_id,
-                'disaggregation_id'=> $indicator->disaggregation_id
-            ]);
-    
-            $indicator_value->save();
-          }
-
-            if(!empty($indicator->qualitative) || !empty($indicator->quantitative)){
-                $change = Change::create([
+        
+            if(!empty($indicator->value_qualitative) || !empty($indicator->value_quantitative) || !empty($indicator->ind_url_source) || !empty($indicator->file_source) || !empty($indicator->disaggregation_id)){
+                $indicator_value = IndicatorValue::create([
                     'link_effect_indicator_id' => $effect_indicator->id,
-                    'qualitative' => $indicator->qualitative,
-                    'quantitative' => $indicator->quantitative ,
+                    'value_qualitative' => $indicator->value_qualitative,
+                    'value_quantitative' => $indicator->value_quantitative,
+                    'url_source' => $indicator->ind_url_source,
+                    'file_source' => $indicator->file_source,
+                    'disaggregation_id'=> $indicator->disaggregation_id
                 ]);
+        
+                $indicator_value->save();
+               
             }
-           
         }
 
         //Evidence repeat
@@ -508,7 +532,6 @@ class EffectCrudController extends CrudController
 
     public function update(EffectRequest $request)
     {
-    
 
         $response = $this->traitUpdate();
         $effect = $this->crud->getCurrentEntry();
@@ -524,6 +547,7 @@ class EffectCrudController extends CrudController
     {
 
         $indicators_repeat = json_decode($repeat);
+
         foreach($indicators_repeat as $indicator ){
             $effect_indicator = LinkEffectIndicator::updateOrCreate(
                 [
@@ -537,7 +561,26 @@ class EffectCrudController extends CrudController
                     'baseline_qualitative' => $indicator->baseline_qualitative,
                 ]
             );
+
             $effect_indicator->save();
+            $dis_name = "disaggregation_id[]";
+            
+           
+            $indicator_value = IndicatorValue::updateOrCreate(
+                [
+                    'id'=> $indicator->ind_value_id,
+                ],
+                [
+                'link_effect_indicator_id' => $effect_indicator->id,
+                'value_qualitative' => $indicator->value_qualitative,
+                'value_quantitative' => $indicator->value_quantitative,
+                'url_source' => $indicator->ind_url_source,
+                'file_source' => $indicator->file_source,
+                'disaggregation_id'=> $indicator->$dis_name
+                ]
+            );
+
+            $indicator_value->save();
         }
         
     }
@@ -574,6 +617,7 @@ class EffectCrudController extends CrudController
         foreach($evidence_repeat as $evidence ){
         //problem with file
             if(!empty($evidence->description)){
+               
                 $new_evidence  = Evidence::updateOrCreate(
                     [
                     'id' => $evidence->id
@@ -581,7 +625,7 @@ class EffectCrudController extends CrudController
                     [
                         'effect_id' =>  $effect_id,
                         'description' => $evidence->description,
-                        'file' => $evidence->file,
+                        // 'file' => $evidence->file,
                         'urls' => $evidence->url,
                         'files_description' => $evidence->files_description
                     ]

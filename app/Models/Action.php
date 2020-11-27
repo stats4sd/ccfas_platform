@@ -68,10 +68,23 @@ class Action extends Model
     {
         return $this->belongsToMany(GeoBoundary::class, '_link_actions_geo_boundaries');
     }
+    public function outputs()
+    {
+        return $this->belongsToMany(Output::class);
+    }
+    public function activities()
+    {
+        return $this->belongsToMany(Activity::class);
+    }
 
     public function subactivities()
     {
         return $this->belongsToMany(Subactivity::class, '_link_actions_subactivities');
+    }
+
+    public function milestones()
+    {
+        return $this->belongsToMany(Milestone::class, '_link_actions_milestones');
     }
 
     public function pillars()

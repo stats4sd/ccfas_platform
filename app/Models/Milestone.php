@@ -5,7 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class LinkEffectIndicator extends Model
+class Milestone extends Model
 {
     use CrudTrait;
 
@@ -15,7 +15,7 @@ class LinkEffectIndicator extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = '_link_effects_indicators';
+    protected $table = 'milestones';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -34,9 +34,9 @@ class LinkEffectIndicator extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function effect()
+    public function actions()
     {
-        return $this->belongsTo(Effect::class);
+        return $this->belongsToMany(Action::class, '_link_actions_milestones');
     }
 
     /*
@@ -56,17 +56,4 @@ class LinkEffectIndicator extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
-    public function setBaselineQuantitativeAttribute($value)
-    {
-        
-        if(empty($value)){
-            $this->attributes['baseline_quantitative'] = null;
-           
-        }else {
-            $this->attributes['baseline_quantitative'] = $value;
-          
-        }
-       
-    }
-
 }

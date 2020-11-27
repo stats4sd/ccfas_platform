@@ -22,6 +22,7 @@ class IndicatorValue extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
+    protected $casts = ['disaggregation_id' => 'array' ];
 
     /*
     |--------------------------------------------------------------------------
@@ -56,4 +57,16 @@ class IndicatorValue extends Model
     | MUTATORS
     |--------------------------------------------------------------------------
     */
+    public function setValueQuantitativeAttribute($value)
+    {
+        if(empty($value)){
+            $this->attributes['value_quantitative'] = null;
+           
+        }else {
+            $this->attributes['value_quantitative'] = $value;
+          
+        }
+       
+       
+    }
 }
