@@ -15,7 +15,6 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
     Route::crud('effect', 'EffectCrudController');
-    Route::get('effect/save-and-create-action', 'EffectCrudController@saveAndCreateAction');
     Route::crud('action', 'ActionCrudController');
     Route::crud('indicator', 'IndicatorCrudController');
     Route::crud('indicatorstatus', 'IndicatorStatusCrudController');

@@ -21,7 +21,7 @@ class CreateIndicatorValuesTable extends Migration
             $table->string('url_source')->nullable();
             $table->string('file_source')->nullable();
             $table->foreignId('indicator_status_id')->nullable();
-            $table->foreignId('disaggregation_id')->nullable();
+            $table->json('disaggregation_id')->nullable();
             $table->timestamps();
         });
     }
