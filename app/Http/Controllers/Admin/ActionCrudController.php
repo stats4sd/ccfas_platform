@@ -60,7 +60,18 @@ class ActionCrudController extends CrudController
        
         });
 
-        
+        $this->crud->addFilter([ 
+            'type'  => 'simple',
+            'name'  => 'completed',
+            'label' => 'Not Completed'
+          ],
+          false,
+          function() { 
+            
+            $this->crud->addClause('where', 'completed', '0'); 
+       
+        });
+
         $this->crud->addColumns([
             [
                 'label'     => "Team",
@@ -75,6 +86,12 @@ class ActionCrudController extends CrudController
                 'type' => "text",
                 'name' => 'description',
                 'label' => 'Description',
+
+            ],
+            [
+                'type' => "check",
+                'name' => 'completed',
+                'label' => 'Completed',
 
             ],
 
@@ -117,6 +134,11 @@ class ActionCrudController extends CrudController
                     return $query->whereIn('id', $teams)->get();
                  }), 
                 
+            ],
+            [
+                'type' => "hidden",
+                'name' => 'completed',
+                'value' => '1'
             ],
             [
                 'name'          => 'description',
@@ -225,20 +247,20 @@ class ActionCrudController extends CrudController
                 <p>In the this section you will place the action within the project Logframe. Please complete all the questions </p>
                 '
             ],
-            [
-                'type' => "relationship",
-                'name' => 'outputs',
-                'placeholder' => "Select an Output",
-                'label' => 'Select the Output under which this action falls '
+            // [
+            //     'type' => "relationship",
+            //     'name' => 'outputs',
+            //     'placeholder' => "Select an Output",
+            //     'label' => 'Select the Output under which this action falls '
                 
-            ],
-            [
-                'type' => "relationship",
-                'name' => 'activities',
-                'placeholder' => "Select an Activity",
-                'label' => 'Select the Activity under which this action falls '
+            // ],
+            // [
+            //     'type' => "relationship",
+            //     'name' => 'activities',
+            //     'placeholder' => "Select an Activity",
+            //     'label' => 'Select the Activity under which this action falls '
                 
-            ],
+            // ],
             [
                 'type' => "relationship",
                 'name' => 'subactivities',
@@ -358,6 +380,64 @@ class ActionCrudController extends CrudController
     public function fetchProducts()
     {
         return $this->fetch(Product::class);
+    }
+
+    protected function setupInlineCreateOperation()
+    {
+        $this->crud->removeAllFields();
+      
+        CRUD::addFields([ 
+            [   // CustomHTML
+                'name'  => 'separator',
+                'type'  => 'custom_html',
+                'value' => '<h6><b>The "Action" that produced the effect </b></h6>
+                <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope 
+
+                This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture.
+                Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up. </p>
+                '
+            ],
+            [  // Select
+                'label'     => "Team",
+                'type'      => 'select',
+                'name'      => 'team_id', 
+                'entity'    => 'team', 
+                'model'     => "App\Models\Team", 
+                'attribute' => 'name', 
+                // optional - force the related options to be a custom query, instead of all();
+                'options'   => (function ($query) {
+                    $teams =  backpack_user()->teams()->pluck('teams.id')->toArray();
+                   
+                    return $query->whereIn('id', $teams)->get();
+                 }), 
+                
+            ],
+            [
+                'name'          => 'description',
+                'label'         => 'Provide a description of the action you are reporting. There is no limit to the amount of information you can provide. ',
+                'type'          => 'textarea',
+                
+            ],
+            [
+                'name'          => 'start',
+                'label'         => 'When did the action that cause the effect start? ',
+                'type'          => 'date',
+                'hint'          => "if you don't know the exact date, the month and year are enough"
+            ],
+            [
+                'name'          => 'end',
+                'label'         => 'If the action has finished, please state the date ',
+                'type'          => 'date',
+                'hint'          => "if you don't know the exact date, the month and year are enough"
+            ],
+       
+            [
+                'type' => "hidden",
+                'name' => 'completed',
+                'value' => '0'
+            ],
+        ]);
+            
     }
 
     

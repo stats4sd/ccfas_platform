@@ -265,7 +265,7 @@ class EffectCrudController extends CrudController
             
             
             [   // repeatable evidencies
-                'name'  => 'evidencies_repeat',
+                'name'  => 'evidences_repeat',
                 'label' => '',
                 'type'  => 'repeatable',
                 'value'=>null,
@@ -288,14 +288,14 @@ class EffectCrudController extends CrudController
                        
                     ],    
                     [   // Upload
-                        'name'      => 'file',
+                        'name'      => 'files',
                         'label'     => 'E.3 Evidence File',
                         'type'      => 'upload_multiple',
                         'upload'    => true,
                         'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
                     ],
                     [
-                        'name'    => 'url',
+                        'name'    => 'urls',
                         'type'    => 'url',
                         'label'   => 'E.4 Evidence url Source',
                        
@@ -379,14 +379,7 @@ class EffectCrudController extends CrudController
                     ],
                 'placeholder' => "Select an Action",
                 'label' =>'',
-              
-
-            ],
-            [   // CustomHTML
-                'name'  => 'action_button',
-                'type'  => 'custom_html',
-                'value' => '<a style="float: right;" href="save-and-create-action" class="btn btn-primary" data-style="zoom-in"><i class="la la-plus"></i> New Action</a>'
-            ],
+            ]
         ]);
       
     }
@@ -400,15 +393,6 @@ class EffectCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
-    }
-
-    public function saveAndCreateAction(EffectRequest $request)
-    {
-        #pass team
-       
-        $this->store($request);
-        $effect = $this->crud->getCurrentEntry();
-        return Redirect::to('action');
     }
 
     public function fetchIndicators()
@@ -450,81 +434,14 @@ class EffectCrudController extends CrudController
     public function store(EffectRequest $request)
     {
 
-      // do something before validation, before save, before everything
+        // do something before validation, before save, before everything
 
         $response = $this->traitStore();
         $effect = $this->crud->getCurrentEntry();
-        $indicator_repeat = json_decode($request->indicator_repeat);
-      
-        foreach($indicator_repeat as $indicator ){
-      
-            if(!empty($indicator->indicators)){
-                $effect_indicator = LinkEffectIndicator::create([
-                    'effect_id' => $effect->id,
-                    'indicator_id' => $indicator->indicators,
-                    'level_attribution_id' => $indicator->level_attribution_id,
-                    'baseline_quantitative' => $indicator->baseline_quantitative,
-                    'baseline_qualitative' => $indicator->baseline_qualitative
-                ]);
-
-                $effect_indicator->save();
-               
-            }
-
-          //problem with file
         
-            if(!empty($indicator->value_qualitative) || !empty($indicator->value_quantitative) || !empty($indicator->ind_url_source) || !empty($indicator->file_source) || !empty($indicator->disaggregation_id)){
-                $indicator_value = IndicatorValue::create([
-                    'link_effect_indicator_id' => $effect_indicator->id,
-                    'value_qualitative' => $indicator->value_qualitative,
-                    'value_quantitative' => $indicator->value_quantitative,
-                    'url_source' => $indicator->ind_url_source,
-                    'file_source' => $indicator->file_source,
-                    'disaggregation_id'=> $indicator->disaggregation_id
-                ]);
-        
-                $indicator_value->save();
-               
-            }
-        }
-
-        //Evidence repeat
-        $evidence_repeat = json_decode($request->evidencies_repeat);
-        
-        foreach($evidence_repeat as $evidence ){
-          //problem with file
-            if(!empty($evidence->description)){
-            $new_evidence = Evidence::create([
-                'effect_id' =>  $effect->id,
-                'description' => $evidence->description,
-                'file' => $evidence->file,
-                'urls' => $evidence->url,
-                'files_description' => $evidence->files_description
-            ]);
-    
-            $new_evidence->save();
-            }
-           
-        }
-
-         //Beneficiries repeat
-         $beneficiaries_repeat = json_decode($request->beneficiaries_repeat);
-        
-         foreach($beneficiaries_repeat as $beneficiary ){
-           //problem with file
-            if(!empty($beneficiary->description)){
-                $new_beneficiary  = Beneficiary::create([
-                    'effect_id' =>  $effect->id,
-                    'description' => $beneficiary->description,
-                    'beneficiary_type_id' => $beneficiary->beneficiary_type_id,
-                
-                ]);
-        
-                $new_beneficiary->save();
-            }
-            
-         }
- 
+        $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
+        $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
+        $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
  
         // do something after save
         return $response;
@@ -532,18 +449,20 @@ class EffectCrudController extends CrudController
 
     public function update(EffectRequest $request)
     {
+        // do something before validation, before save, before everything
 
         $response = $this->traitUpdate();
         $effect = $this->crud->getCurrentEntry();
-          //Beneficiries repeat
-        $this->updateBeneficiary($request->beneficiaries_repeat, $effect->id);
-        $this->updateEvidence($request->evidencies_repeat, $effect->id);
-        $this->updateIndicator($request->indicator_repeat, $effect->id);
+        
+        $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
+        $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
+        $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
+
          // do something after save
         return $response;
     }
 
-    public function updateIndicator($repeat, $effect_id)
+    public function updateOrCreateIndicators($repeat, $effect_id)
     {
 
         $indicators_repeat = json_decode($repeat);
@@ -585,7 +504,7 @@ class EffectCrudController extends CrudController
         
     }
 
-    public function updateBeneficiary($repeat, $effect_id)
+    public function updateOrCreateBeneficiaries($repeat, $effect_id)
     {
         $beneficiaries_repeat = json_decode($repeat);
     
@@ -610,7 +529,7 @@ class EffectCrudController extends CrudController
         }
     }
 
-    public function updateEvidence($repeat, $effect_id)
+    public function updateOrCreateEvidences($repeat, $effect_id)
     {
         $evidence_repeat = json_decode($repeat);
     
@@ -625,8 +544,8 @@ class EffectCrudController extends CrudController
                     [
                         'effect_id' =>  $effect_id,
                         'description' => $evidence->description,
-                        // 'file' => $evidence->file,
-                        'urls' => $evidence->url,
+                        // 'files' => $evidence->file,
+                        'urls' => $evidence->urls,
                         'files_description' => $evidence->files_description
                     ]
                 
@@ -637,7 +556,5 @@ class EffectCrudController extends CrudController
             
         }
     }
-
-   
     
 }
