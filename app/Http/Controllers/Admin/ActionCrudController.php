@@ -7,7 +7,9 @@ use App\Models\Product;
 use App\Models\GeoBoundary;
 use App\Models\ProductType;
 use App\Http\Requests\ActionRequest;
+use App\Models\Activity;
 use App\Models\CsaFramework;
+use App\Models\Output;
 use App\Models\Subactivity;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -75,7 +77,7 @@ class ActionCrudController extends CrudController
         $this->crud->addColumns([
             [
                 'label'     => "Team",
-                'type'      => 'select',
+                'type'      => 'select', 
                 'name'      => 'team_id',
                 'entity'    => 'team', 
                 'model'     => "App\Models\Team",
@@ -247,25 +249,30 @@ class ActionCrudController extends CrudController
                 <p>In the this section you will place the action within the project Logframe. Please complete all the questions </p>
                 '
             ],
-            // [
-            //     'type' => "relationship",
-            //     'name' => 'outputs',
-            //     'placeholder' => "Select an Output",
-            //     'label' => 'Select the Output under which this action falls '
+            [
+                'type' => "select_from_array",
+                'name' => 'outputs',
+                'placeholder' => "Select an Output",
+                'label' => 'Select the Output under which this action falls',
+                'options'   => $this->getOutputs(),   
                 
-            // ],
-            // [
-            //     'type' => "relationship",
-            //     'name' => 'activities',
-            //     'placeholder' => "Select an Activity",
-            //     'label' => 'Select the Activity under which this action falls '
+            ],
+            [
+                'type' => "relationship",
+                'name' => 'activities',
+                'placeholder' => "Select an Activity",
+                'label' => 'Select the Activity under which this action falls ',
+                'multiple' => false, 
                 
-            // ],
+               
+                
+            ],
             [
                 'type' => "relationship",
                 'name' => 'subactivities',
                 'placeholder' => "Select a Subactivity",
-                'label' => 'Select the sub activity under which this action falls '
+                'label' => 'Select the sub activity under which this action falls ',
+                'multiple' => false, 
                 
             ],
             [
@@ -361,6 +368,26 @@ class ActionCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function getOutputs()
+    {
+        return Output::get()->pluck('name','id');
+    }
+
+    public function fetchActivities()
+    {
+        $form = collect(request()->input('form'))->pluck('value', 'name');
+
+        // dd($form);
+        return $this->fetch([
+            'model' => Activity::class,
+            'query' => function ($model) {
+                return $model->where('output_id', '=', isset($form['outputs']));
+                }
+              
+            
+        ]);
     }
 
     public function fetchAims()

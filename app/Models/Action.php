@@ -72,10 +72,10 @@ class Action extends Model
     // {
     //     return $this->belongsToMany(Output::class);
     // }
-    // public function activities()
-    // {
-    //     return $this->belongsToMany(Activity::class);
-    // }
+    public function activities()
+    {
+        return $this->belongsToMany(Activity::class);
+    }
 
     public function subactivities()
     {

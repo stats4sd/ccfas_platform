@@ -24,7 +24,7 @@ return [
     // ----
 
     // Project name. Shown in the window title.
-    'project_name' => 'CCFAS-EU-IFAD',
+    'project_name' => 'CCAFS-EU-IFAD',
 
     // When clicking on the admin panel's top-left logo/name,
     // where should the user be redirected?
@@ -173,7 +173,7 @@ return [
 
     // The prefix used in all base routes (the 'admin' in admin/dashboard)
     // You can make sure all your URLs use this prefix by using the backpack_url() helper instead of url()
-    'route_prefix' => 'ccfas',
+    'route_prefix' => 'ccafs',
 
     // The web middleware (group) used in all base & CRUD routes
     // If you've modified your "web" middleware group (ex: removed sessions), you can use a different
@@ -225,7 +225,7 @@ return [
     ],
 
     // Alias for that middleware
-    'middleware_key' => 'ccfsa',
+    'middleware_key' => 'ccafs',
     // Note: It's recommended to use the backpack_middleware() helper everywhere, which pulls this key for you.
 
     // Username column for authentication

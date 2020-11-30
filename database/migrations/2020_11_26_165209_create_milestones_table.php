@@ -15,7 +15,7 @@ class CreateMilestonesTable extends Migration
         Schema::create('milestones', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('activity_id')->constrained('activities')->onDelete('cascade');
-            $table->string('name')->unique();
+            $table->text('name');
             $table->timestamps();
         });
     }
