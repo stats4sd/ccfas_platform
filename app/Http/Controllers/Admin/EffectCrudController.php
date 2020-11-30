@@ -66,10 +66,10 @@ class EffectCrudController extends CrudController
             ],
             false,
             function () {
-              $teams = backpack_user()->teams;
+                $teams = backpack_user()->teams;
 
-              $this->crud->addClause('whereIn', 'team_id', $teams);
-          }
+                $this->crud->addClause('whereIn', 'team_id', $teams);
+            }
         );
 
         $this->crud->addColumns([
@@ -103,6 +103,13 @@ class EffectCrudController extends CrudController
         CRUD::setValidation(EffectRequest::class);
 
         CRUD::addFields([
+            // Backpack checks for upload==true fields before setting the form's enctype="multipart/form-data"
+            // But it doesn't check 'fake' fields inside repeatable groups - so add a dummy_upload here to force the correct enctype;
+            [
+                'name' => 'dummy_upload',
+                'upload' => true,
+                'type' => 'hidden',
+            ],
             [  // Select
                 'label'     => "Team",
                 'type'      => 'select',
@@ -268,7 +275,7 @@ class EffectCrudController extends CrudController
             [   // repeatable evidencies
                 'name'  => 'evidences_repeat',
                 'label' => '',
-                'type'  => 'repeatable',
+                'type'  => 'repeatable_with_upload',
                 'value'=>null,
                 'fields' => [
                     [
@@ -289,9 +296,9 @@ class EffectCrudController extends CrudController
 
                     ],
                     [   // Upload
-                        'name'      => 'files',
-                        'label'     => 'E.3 Evidence File',
-                        'type'      => 'upload_multiple',
+                        'name'      => 'evidence_files',
+                        'label'     => 'E.3 Evidence Files',
+                        'type'      => 'upload_multiple_for_repeatable',
                         'upload'    => true,
                         'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
                     ],
@@ -529,7 +536,7 @@ class EffectCrudController extends CrudController
     {
         $evidence_repeat = json_decode($repeat);
 
-        foreach ($evidence_repeat as $evidence) {
+        foreach ($evidence_repeat as $index => $evidence) {
             //problem with file
             if (!empty($evidence->description)) {
                 $new_evidence  = Evidence::updateOrCreate(
@@ -539,7 +546,7 @@ class EffectCrudController extends CrudController
                     [
                         'effect_id' =>  $effect_id,
                         'description' => $evidence->description,
-                        // 'files' => $evidence->file,
+                        'files' => 'evidence_files_'.$index,
                         'urls' => $evidence->urls,
                         'files_description' => $evidence->files_description
                     ]

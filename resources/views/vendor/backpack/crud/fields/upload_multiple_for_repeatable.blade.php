@@ -38,9 +38,11 @@
     	@endforeach
     </div>
     @endif
+    @else
+    <div class="well well-sm existing-file"></div>
     @endif
 	{{-- Show the file picker on CREATE form. --}}
-	<input name="{{ $field['name'] }}[]" type="hidden" value="">
+	<input name="{{ $field['name'] }}[]" type="hidden" data-for-type="file">
 	<div class="backstrap-file mt-2">
 		<input
 	        type="file"
@@ -71,21 +73,45 @@
         <script>
         	function bpFieldInitUploadMultipleElement(element) {
         		var fieldName = element.attr('data-field-name');
-        		var clearFileButton = element.find(".file-clear-button");
         		var fileInput = element.find("input[type=file]");
         		var inputLabel = element.find("label.backstrap-file-label");
 
+                var fileHidden = element.find("input[type=hidden]")
+                var filePreview = element.find(".existing-file")
+
+
+                if($(fileHidden).data('initial') && $(fileHidden).data('initial').length > 0) {
+                    //get initial file values from data passed by the repeatable field:
+                    for(i=0; i<$(fileHidden).data('initial').length; ++i) {
+                        var path = $(fileHidden).data('initial')[i]
+                        var filename = path.split('/')[path.split('/').length - 1]
+                        var repeatIndex = $(fileHidden).data('index')
+
+                        filePreview.append(`<div class="file-preview border border-light">
+                            <a target="_blank" href="{{ url('') }}/${path}">${filename}</a>
+                            <a href="#" class="btn btn-light btn-sm float-right file-clear-button" title="Clear file" data-filename="${path}" data-index="${repeatIndex}"><i class="la la-remove"></i></a>
+                            <div class="clearfix"></div>
+                        </div>`)
+
+                    }
+                } else {
+                    filePreview.remove()
+                }
+
+        		var clearFileButton = element.find(".file-clear-button");
 		        clearFileButton.click(function(e) {
 		        	e.preventDefault();
 		        	var container = $(this).parent().parent();
 		        	var parent = $(this).parent();
+                    var repeatIndex = $(this).data('index');
+
 		        	// remove the filename and button
 		        	parent.remove();
 		        	// if the file container is empty, remove it
 		        	if ($.trim(container.html())=='') {
 		        		container.remove();
 		        	}
-		        	$("<input type='hidden' name='clear_"+fieldName+"[]' value='"+$(this).data('filename')+"'>").insertAfter(fileInput);
+		        	$("<input type='hidden' name='clear_"+fieldName+"_"+repeatIndex+"[]' value='"+$(this).data('filename')+"'>").insertAfter(fileInput);
 		        });
 
 		        fileInput.change(function() {
@@ -93,6 +119,8 @@
 		        	// remove the hidden input, so that the setXAttribute method is no longer triggered
 		        	$(this).next("input[type=hidden]").remove();
 		        });
+
+
         	}
         </script>
     @endpush

@@ -126,10 +126,15 @@
                     .each(function(){
                         if ($(this).data('name')) {
                             var name_attr = $(this).data('name');
-                            $(this).removeAttr("data-name");
+                            // keep data-name (or name) attributes for file upload fields
+                            if(this.type != "file"){
+                                $(this).removeAttr("data-name");
+                            }
                         } else if ($(this).attr('name')) {
                             var name_attr = $(this).attr('name');
-                            $(this).removeAttr("name");
+                            if(this.type != "file") {
+                                $(this).removeAttr("name");
+                            }
                         }
                         $(this).attr('data-repeatable-input-name', name_attr)
                     });
@@ -141,14 +146,20 @@
             container.remove();
 
             element.parent().find('.add-repeatable-element-button').click(function(){
-                newRepeatableElement(container, field_group_clone);
+
+                //check how many repeatable groups already exist (to properly label the file upload fields)
+
+                //this is the container for this repeatable group that holds it inside the main form.
+                var repeat_count = $('[data-repeatable-holder='+field_name+']').children().length
+
+                newRepeatableElement(container, field_group_clone, null, repeat_count);
             });
 
             if (element.val()) {
                 var repeatable_fields_values = JSON.parse(element.val());
 
                 for (var i = 0; i < repeatable_fields_values.length; ++i) {
-                    newRepeatableElement(container, field_group_clone, repeatable_fields_values[i]);
+                    newRepeatableElement(container, field_group_clone, repeatable_fields_values[i], i);
                 }
             } else {
                 element.parent().find('.add-repeatable-element-button').trigger('click');
@@ -169,10 +180,23 @@
         /**
          * Adds a new field group to the repeatable input.
          */
-        function newRepeatableElement(container, field_group, values) {
+        function newRepeatableElement(container, field_group, values, repeat_index) {
 
             var field_name = container.data('repeatable-identifier');
             var new_field_group = field_group.clone();
+
+            // *** Ensure all file uplaod fields have a unique name based on the index of the repeat ***/
+            new_field_group.find('input[type="file"]').each(function(i, el) {
+                var name_attr = $(this).attr('name')
+
+                // if input allows multiple files, we need to keep the [] at the end of the name:
+                if(name_attr.slice(-2) == "[]") {
+                    $(this).attr('name', name_attr.slice(0, -2)+"_"+repeat_index+"[]")
+                } else {
+                    $(this).attr('name', name_attr+"_"+repeat_index)
+                }
+
+            })
 
             //this is the container for this repeatable group that holds it inside the main form.
             var container_holder = $('[data-repeatable-holder='+field_name+']');
@@ -188,9 +212,20 @@
             });
 
             if (values != null) {
+                console.log('repeat values', values)
                 // set the value on field inputs, based on the JSON in the hidden input
                 new_field_group.find('input, select, textarea').each(function () {
                     if ($(this).data('repeatable-input-name')) {
+
+                        //handle file upload fields seperately
+                        if($(this).data('forType') == 'file') {
+                            console.log('input_name', $(this).data('repeatable-input-name').slice(0, -2));
+                            console.log('value of ... ', values[$(this).data('repeatable-input-name').slice(0, -2)])
+                            $(this).data('initial', values[$(this).data('repeatable-input-name').slice(0, -2)]);
+                            $(this).data('index', repeat_index)
+
+                        }
+
                         $(this).val(values[$(this).data('repeatable-input-name')]);
 
                         // if it's a Select input with no options, also attach the values as a data attribute;
@@ -200,6 +235,8 @@
                         if ($(this).is('select') && $(this).children('option').length == 0) {
                           $(this).attr('data-selected-options', JSON.stringify(values[$(this).data('repeatable-input-name')]));
                         }
+
+
                     }
                 });
             }
