@@ -290,7 +290,7 @@ class EffectCrudController extends CrudController
                     [   // Upload
                         'name'      => 'files',
                         'label'     => 'E.3 Evidence File',
-                        'type'      => 'upload_multiple',
+                        'type'      => 'browse_multiple',
                         'upload'    => true,
                         'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
                     ],
@@ -544,7 +544,7 @@ class EffectCrudController extends CrudController
                     [
                         'effect_id' =>  $effect_id,
                         'description' => $evidence->description,
-                        // 'files' => $evidence->file,
+                        'files' => $evidence->files,
                         'urls' => $evidence->urls,
                         'files_description' => $evidence->files_description
                     ]

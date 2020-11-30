@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('ccafs');
 });
 
-Route::get('ccfas/register', 'App\Http\Controllers\Admin\Auth\RegisterController@showRegistrationForm')->name('backpack.auth.register');
-Route::post('ccfas/register', 'App\Http\Controllers\Admin\Auth\RegisterController@register');
+Route::get('ccafs/register', 'App\Http\Controllers\Admin\Auth\RegisterController@showRegistrationForm')->name('backpack.auth.register');
+Route::post('ccafs/register', 'App\Http\Controllers\Admin\Auth\RegisterController@register');
