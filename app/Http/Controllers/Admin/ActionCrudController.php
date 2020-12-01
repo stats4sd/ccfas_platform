@@ -262,24 +262,30 @@ class ActionCrudController extends CrudController
                 'name' => 'activities',
                 'placeholder' => "Select an Activity",
                 'label' => 'Select the Activity under which this action falls ',
+                'minimum_input_length' => 0,
                 'multiple' => false, 
-                
-               
-                
+                'ajax' => true, 
+                'dependecies' => ['output_id']
             ],
             [
                 'type' => "relationship",
                 'name' => 'subactivities',
                 'placeholder' => "Select a Subactivity",
                 'label' => 'Select the sub activity under which this action falls ',
+                'minimum_input_length' => 0,
                 'multiple' => false, 
+                'ajax' => true, 
+                'dependecies' => ['activity_id']
                 
             ],
             [
                 'type' => "relationship",
                 'name' => 'milestones',
                 'placeholder' => "Select a Milestone",
-                'label' => 'Select the milestones associated with this activity '
+                'label' => 'Select the milestones associated with this activity ',
+                'minimum_input_length' => 0,
+                'ajax' => true, 
+                'dependecies' => ['activity_id']
                 
                 
             ],
@@ -378,12 +384,35 @@ class ActionCrudController extends CrudController
     public function fetchActivities()
     {
         $form = collect(request()->input('form'))->pluck('value', 'name');
-
-        // dd($form);
+       
         return $this->fetch([
             'model' => Activity::class,
-            'query' => function ($model) {
-                return $model->where('output_id', '=', isset($form['outputs']));
+            'query' => function ($model) use($form) {
+                return $model->where('output_id', '=', $form['outputs']);
+                }
+        ]);
+    }
+
+    public function fetchSubactivities()
+    {
+        $form = collect(request()->input('form'))->pluck('value', 'name');
+       
+        return $this->fetch([
+            'model' => Subactivity::class,
+            'query' => function ($model) use($form) {
+                return $model->where('activity_id', '=', $form['activities']);
+                }
+        ]);
+    }
+
+    public function fetchMilestones()
+    {
+        $form = collect(request()->input('form'))->pluck('value', 'name');
+       
+        return $this->fetch([
+            'model' => Subactivity::class,
+            'query' => function ($model) use($form) {
+                return $model->where('activity_id', '=', $form['activities']);
                 }
               
             

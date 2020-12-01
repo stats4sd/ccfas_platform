@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUploadFields;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class IndicatorValue extends Model
 {
-    use CrudTrait;
+    use CrudTrait, HasUploadFields;
 
     /*
     |--------------------------------------------------------------------------
@@ -68,5 +69,14 @@ class IndicatorValue extends Model
         }
        
        
+    }
+
+    public function setFileSourceAttribute($value)
+    {
+        $attribute_name = "file_source";
+        $disk = "public";
+        $destination_path = "indicator_value";
+
+        $this->uploadMultipleFilesToDiskFromRepeatable($value, $attribute_name, $disk, $destination_path);
     }
 }

@@ -149,15 +149,6 @@ class EffectCrudController extends CrudController
                          This should include how the indicator is calculated and how the data is obtained.</p>
                          <p><b>We could break this down into more specific questions, but I am not sure if this would not impose a burden that is to high on the respondents</b></p>'
                     ],
-                    // [
-                    //     'name'    => 'indicator_id',
-                    //     'type' => "select_from_array",
-                    //     'label' => 'Indicator ',
-
-                    //     // optional - force the related options to be a custom query, instead of all();
-                    //     'options'   => $this->getIndicators(),
-
-                    // ],
                     [
                         'name' => 'ind_value_id',
                         'type' => "hidden",
@@ -184,8 +175,6 @@ class EffectCrudController extends CrudController
                         'name'    => 'baseline_qualitative',
                         'type'   =>'text',
                         'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status at baseline?<p></p>',
-
-
                     ],
                     [   // CustomHTML
                         'name'  => 'separator',
@@ -195,35 +184,28 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'value_quantitative',
                         'type'    => 'number',
-                        'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
-
-
+                       'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
                     ],
-
                     [
                         'name'    => 'baseline_quantitative',
                         'type'   =>'number',
                         'label' => 'I.3.1 If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?',
-
-
                     ],
                     [
                         'name' => 'effect_indicator_id',
                         'type' => "hidden",
                         'value' => null
-
                     ],
                     [
                         'name'    => 'ind_url_source',
                         'type'    => 'text',
                         'label'   => 'I.4 What was the source for this estimate of the indicator?
                         <p>I.4.1 Please provide a source that can be referenced. If it is on-line, please provide a URL.</p>',
-
                     ],
                     [   // Upload
                         'name'      => 'file_source',
                         'label'     => 'I.4.2 If you have a document that supports this indicator us evidence, you can upload it here.',
-                        'type'      => 'upload',
+                        'type'      => 'upload_multiple_for_repeatable',
                         'upload'    => true,
                         'disk'      => 'public',
                     ],
@@ -237,15 +219,6 @@ class EffectCrudController extends CrudController
 
 
                     ],
-                    // [
-                    //     'name'    => 'indicator_status_id',
-                    //     'label' => 'Indicator Status',
-
-                    //     // optional - force the related options to be a custom query, instead of all();
-                    //     'options'   =>  $this->getIndicatorStatus(),
-                    // ],
-
-
                     [
                         'name'    => 'disaggregation_id',
                         'type' => "select2_from_array",
@@ -445,7 +418,7 @@ class EffectCrudController extends CrudController
 
         $response = $this->traitStore();
         $effect = $this->crud->getCurrentEntry();
-
+    
         $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
         $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
         $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
@@ -473,23 +446,24 @@ class EffectCrudController extends CrudController
     {
         $indicators_repeat = json_decode($repeat);
 
-        foreach ($indicators_repeat as $indicator) {
-            $effect_indicator = LinkEffectIndicator::updateOrCreate(
-                [
-                    'id'=> $indicator->effect_indicator_id,
-                ],
-                [
-                    'effect_id' => $effect_id,
-                    'indicator_id' => $indicator->indicators,
-                    'level_attribution_id' => $indicator->level_attribution_id,
-                    'baseline_quantitative' => $indicator->baseline_quantitative,
-                    'baseline_qualitative' => $indicator->baseline_qualitative,
-                ]
-            );
+        foreach ($indicators_repeat as  $index => $indicator) {
+            // if(!empty($indicator->indicator_id)){
+                $effect_indicator = LinkEffectIndicator::updateOrCreate(
+                    [
+                        'id'=> $indicator->effect_indicator_id,
+                    ],
+                    [
+                        'effect_id' => $effect_id,
+                        'indicator_id' => $indicator->indicators,
+                        'level_attribution_id' => $indicator->level_attribution_id,
+                        'baseline_quantitative' => $indicator->baseline_quantitative,
+                        'baseline_qualitative' => $indicator->baseline_qualitative,
+                    ]
+                );
+            }
 
             $effect_indicator->save();
             $dis_name = "disaggregation_id[]";
-
 
             $indicator_value = IndicatorValue::updateOrCreate(
                 [
@@ -500,13 +474,13 @@ class EffectCrudController extends CrudController
                     'value_qualitative' => $indicator->value_qualitative,
                     'value_quantitative' => $indicator->value_quantitative,
                     'url_source' => $indicator->ind_url_source,
-                    'file_source' => $indicator->file_source,
+                    'file_source' => 'file_source_'.$index,
                     'disaggregation_id'=> $indicator->$dis_name
                 ]
             );
 
             $indicator_value->save();
-        }
+        // }
     }
 
     public function updateOrCreateBeneficiaries($repeat, $effect_id)
