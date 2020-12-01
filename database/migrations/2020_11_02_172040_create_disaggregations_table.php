@@ -16,7 +16,6 @@ class CreateDisaggregationsTable extends Migration
         Schema::create('disaggregations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
-            $table->text('description');
             $table->timestamps();
         });
     }

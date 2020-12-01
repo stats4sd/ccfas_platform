@@ -24,7 +24,7 @@ class Effect extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
-    protected $casts = ['file' => 'array', 'file' => 'array' ];
+    protected $casts = ['file_source' => 'array', 'file' => 'array' ];
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class Effect extends Model
                 $effect_indicator['value_qualitative'] = $indi_value['value_qualitative'];
                 $effect_indicator['ind_url_source'] = $indi_value['url_source'];
                 $effect_indicator['disaggregation_id[]'] = $indi_value['disaggregation_id'];
-                // $effect_indicator['file_source'] = $indi_value['file_source'];
+                $effect_indicator['file_source'] = $indi_value['file_source'];
             }
             $indicators_edit[]= $effect_indicator;
         }

@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Aim;
 use App\Models\Product;
 use App\Models\GeoBoundary;
-use App\Models\ProductType;
 use App\Http\Requests\ActionRequest;
 use App\Models\Activity;
-use App\Models\CsaFramework;
 use App\Models\Output;
 use App\Models\Subactivity;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -22,7 +20,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class ActionCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
@@ -107,7 +105,7 @@ class ActionCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
-    protected function setupCreateOperation()
+protected function setupCreateOperation()
     {
         CRUD::setValidation(ActionRequest::class);
 
@@ -258,14 +256,20 @@ class ActionCrudController extends CrudController
                 
             ],
             [
-                'type' => "relationship",
+                'type' => "select2_from_ajax_multiple",
                 'name' => 'activities',
                 'placeholder' => "Select an Activity",
                 'label' => 'Select the Activity under which this action falls ',
                 'minimum_input_length' => 0,
                 'multiple' => false, 
-                'ajax' => true, 
-                'dependecies' => ['output_id']
+                'dependecies' => ['output_id'],
+                'entity'      => 'activities', // the method that defines the relationship in your Model
+                'attribute'   => "name", // foreign key attribute that is shown to user
+                'data_source' => backpack_url('action/fetch/activity'), // url to controller search function (with /{id} should return model)
+                'method' => 'post',
+                'include_all_form_fields' => true,
+                'pivot' => true,
+            
             ],
             [
                 'type' => "relationship",
@@ -273,7 +277,7 @@ class ActionCrudController extends CrudController
                 'placeholder' => "Select a Subactivity",
                 'label' => 'Select the sub activity under which this action falls ',
                 'minimum_input_length' => 0,
-                'multiple' => false, 
+                'multiple' => true, 
                 'ajax' => true, 
                 'dependecies' => ['activity_id']
                 
@@ -376,12 +380,26 @@ class ActionCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
+    public function store()
+    {
+
+        // do something before validation, before save, before everything
+        $this->crud->getRequest()->request->remove('activities');
+        $this->crud->getRequest()->request->remove('outputs');
+
+        $response = $this->traitStore();
+
+        // do something after save
+        return $response;
+        
+    }
+
     public function getOutputs()
     {
         return Output::get()->pluck('name','id');
     }
 
-    public function fetchActivities()
+    public function fetchActivity()
     {
         $form = collect(request()->input('form'))->pluck('value', 'name');
        
@@ -486,7 +504,6 @@ class ActionCrudController extends CrudController
                 'type'          => 'date',
                 'hint'          => "if you don't know the exact date, the month and year are enough"
             ],
-       
             [
                 'type' => "hidden",
                 'name' => 'completed',
@@ -495,7 +512,4 @@ class ActionCrudController extends CrudController
         ]);
             
     }
-
-    
-
 }

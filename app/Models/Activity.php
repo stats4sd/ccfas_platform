@@ -38,6 +38,11 @@ class Activity extends Model
         return $this->hasMany(Subactivity::class);
     }
 
+    public function actions()
+    {
+        return $this->belongsToMany(Action::class, '_link_actions_activities');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | RELATIONS

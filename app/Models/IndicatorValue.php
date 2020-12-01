@@ -23,7 +23,7 @@ class IndicatorValue extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
-    protected $casts = ['disaggregation_id' => 'array' ];
+    protected $casts = ['disaggregation_id' => 'array', 'file_source' => 'array' ];
 
     /*
     |--------------------------------------------------------------------------

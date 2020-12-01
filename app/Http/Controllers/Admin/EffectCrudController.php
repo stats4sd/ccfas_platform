@@ -216,8 +216,6 @@ class EffectCrudController extends CrudController
 
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getLevelAttributions(),
-
-
                     ],
                     [
                         'name'    => 'disaggregation_id',
@@ -228,7 +226,6 @@ class EffectCrudController extends CrudController
                         'options'   => $this->getDisaggregations(),
                         'allows_multiple' => true,
                         'allows_null' => true,
-
                     ]
 
 
@@ -425,6 +422,7 @@ class EffectCrudController extends CrudController
 
         // do something after save
         return $response;
+
     }
 
     public function update(EffectRequest $request)
@@ -447,7 +445,7 @@ class EffectCrudController extends CrudController
         $indicators_repeat = json_decode($repeat);
 
         foreach ($indicators_repeat as  $index => $indicator) {
-            // if(!empty($indicator->indicator_id)){
+            if(!empty($indicator->indicators)){
                 $effect_indicator = LinkEffectIndicator::updateOrCreate(
                     [
                         'id'=> $indicator->effect_indicator_id,
@@ -480,7 +478,7 @@ class EffectCrudController extends CrudController
             );
 
             $indicator_value->save();
-        // }
+        }
     }
 
     public function updateOrCreateBeneficiaries($repeat, $effect_id)
@@ -530,4 +528,10 @@ class EffectCrudController extends CrudController
             }
         }
     }
+
+    // protected function setupShowOperation()
+    // {
+        
+    //     $this->crud->set('show.setFromDb', false);
+    // }
 }
