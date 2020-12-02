@@ -440,10 +440,11 @@ protected function setupCreateOperation()
     {
         $form = collect(request()->input('form'))->pluck('value', 'name');
        
+       
         return $this->fetch([
             'model' => Subactivity::class,
             'query' => function ($model) use($form) {
-                return $model->where('activity_id', '=', $form['activities']);
+                return $model->where('activity_id', '=', $form['activities[]']);
                 }
         ]);
     }
@@ -455,7 +456,7 @@ protected function setupCreateOperation()
         return $this->fetch([
             'model' => Subactivity::class,
             'query' => function ($model) use($form) {
-                return $model->where('activity_id', '=', $form['activities']);
+                return $model->where('activity_id', '=', $form['activities[]']);
                 }
               
             
