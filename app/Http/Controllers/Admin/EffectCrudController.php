@@ -261,7 +261,7 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'description',
                         'type'    => 'text',
-                        'label'   => 'E.1 Evidence desciption',
+                        'label'   => 'E.1 Evidence description',
                     ],
                     [
                         'name'    => 'files_description',
@@ -329,11 +329,6 @@ class EffectCrudController extends CrudController
                 'tab' => 'Beneficiaries',
 
             ],
-            // [   // CustomHTML
-            //     'name'  => 'separator_action',
-            //     'type'  => 'custom_html',
-            //     'value' => '<hr style="border: 1px solid #384c74;">'
-            // ],
             [
                 'name'  => 'action_label',
                 'type'  => 'custom_html',
@@ -402,7 +397,7 @@ class EffectCrudController extends CrudController
                
                 return $crud->route;
             }, // override http_referrer_url
-            // 'order' => 1, // change the order save actions are in
+            'order' => 1, // change the order save actions are in
         ]);
     }
 
