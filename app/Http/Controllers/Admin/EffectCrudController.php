@@ -458,9 +458,9 @@ class EffectCrudController extends CrudController
                         'baseline_qualitative' => $indicator->baseline_qualitative,
                     ]
                 );
+                $effect_indicator->save();
             }
 
-            $effect_indicator->save();
             $dis_name = "disaggregation_id[]";
 
             $indicator_value = IndicatorValue::updateOrCreate(
