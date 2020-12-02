@@ -459,25 +459,26 @@ class EffectCrudController extends CrudController
                     ]
                 );
                 $effect_indicator->save();
+            
+
+                $dis_name = "disaggregation_id[]";
+
+                $indicator_value = IndicatorValue::updateOrCreate(
+                    [
+                        'id'=> $indicator->ind_value_id,
+                    ],
+                    [
+                        'link_effect_indicator_id' => $effect_indicator->id,
+                        'value_qualitative' => $indicator->value_qualitative,
+                        'value_quantitative' => $indicator->value_quantitative,
+                        'url_source' => $indicator->ind_url_source,
+                        'file_source' => 'file_source_'.$index,
+                        'disaggregation_id'=> $indicator->$dis_name
+                    ]
+                );
+
+                $indicator_value->save();
             }
-
-            $dis_name = "disaggregation_id[]";
-
-            $indicator_value = IndicatorValue::updateOrCreate(
-                [
-                    'id'=> $indicator->ind_value_id,
-                ],
-                [
-                    'link_effect_indicator_id' => $effect_indicator->id,
-                    'value_qualitative' => $indicator->value_qualitative,
-                    'value_quantitative' => $indicator->value_quantitative,
-                    'url_source' => $indicator->ind_url_source,
-                    'file_source' => 'file_source_'.$index,
-                    'disaggregation_id'=> $indicator->$dis_name
-                ]
-            );
-
-            $indicator_value->save();
         }
     }
 
