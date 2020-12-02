@@ -235,7 +235,7 @@ class EffectCrudController extends CrudController
 
                 // optional
                 'new_item_label'  => 'Add Indicator', // customize the text of the button
-                'tab' => 'Indicator',
+                'tab' => 'Indicators',
 
             ],
             [   // CustomHTML
@@ -347,7 +347,7 @@ class EffectCrudController extends CrudController
                 <p>In this section you need to choose one of the following options</p>
                 <ol type="1">
                     <li>If the action that is associated to the effect reported has already been described, choose it from the box below. </li>
-                    <li>If the action has not yet been described click on the “+ Other” button and describe it.</li>
+                    <li>If the action has not yet been described click on the “Save and Next” button and describe it on the new Action form.</li>
                 </ol>
                 <p>Remember that you can also edit the description of an action by going to the Action menu item on the left column and then click on “Edit” for the chosen action.</p>
                  ',
@@ -356,12 +356,7 @@ class EffectCrudController extends CrudController
             [
                 'type' => "relationship",
                 'name' => 'actions',
-                'ajax' => true,
                 'minimum_input_length' => 0,
-                'inline_create' => [
-                    'entity' => 'action',
-                    'modal_class' => 'modal-dialog modal-xl',
-                ],
                 'placeholder' => "Select an Action",
                 'label' =>'',
                 'tab' => 'Action',
@@ -369,13 +364,31 @@ class EffectCrudController extends CrudController
         ]);
 
         $this->crud->addSaveAction([
-            'name' => 'save_action_one',
+            'name' => 'save_action_and_next',
             'redirect' => function($crud, $request, $itemId) {
+                if($request->current_tab != 'action'){
+                  
+                    $next_tabs = ['effect'=>'indicators', 'indicators'=>'evidence', 'evidence'=>'beneficiaries', 'beneficiaries'=>'action'];
+                    return $crud->route."/".$itemId."/edit#".$next_tabs[$request->current_tab];
+                
+                }else{
+
+                    if(empty($request->actions)){
+                        $new_action = Action::create([
+                            'team_id' => $request->team_id,
+                            'description' => 'add a description',
+                            'completed' => 0,
+                            'start' => date("Y/m/d")
+                        ]);
+                        $new_action->save();
+                        $effect = Effect::find($itemId);
+                        $effect->actions()->sync($new_action->id);    
+                        return 'ccafs/action/'. $new_action->id .'/edit';  
+                    }
+               
+                        return $crud->route;
+                }
              
-                $next_tabs = ['effect'=>'indicator', 'indicator'=>'evidence', 'evidence'=>'beneficiaries', 'beneficiaries'=>'action'];
-        
-                return $crud->route."/".$itemId."/edit#".$next_tabs[$request->current_tab];
-              
             }, // what's the redirect URL, where the user will be taken after saving?
         
             // OPTIONAL:
@@ -389,7 +402,7 @@ class EffectCrudController extends CrudController
                
                 return $crud->route;
             }, // override http_referrer_url
-            'order' => 1, // change the order save actions are in
+            // 'order' => 1, // change the order save actions are in
         ]);
     }
 
@@ -561,10 +574,4 @@ class EffectCrudController extends CrudController
             }
         }
     }
-
-    // protected function setupShowOperation()
-    // {
-        
-    //     $this->crud->set('show.setFromDb', false);
-    // }
 }
