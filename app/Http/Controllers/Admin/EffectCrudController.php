@@ -123,11 +123,13 @@ class EffectCrudController extends CrudController
 
                     return $query->whereIn('id', $teams)->get();
                 }),
+                'tab' => 'Effect',
             ],
             [
                 'name'          => 'description',
                 'label'         => 'Provide a description of the effect you are reporting. There is no limit to the amount of information you can provide. ',
                 'type'          => 'textarea',
+                'tab' => 'Effect',
 
             ],
             [   // repeatable
@@ -233,12 +235,14 @@ class EffectCrudController extends CrudController
 
                 // optional
                 'new_item_label'  => 'Add Indicator', // customize the text of the button
+                'tab' => 'Indicator',
 
             ],
             [   // CustomHTML
                 'name'  => 'separator',
                 'type'  => 'custom_html',
-                'value' => '<h6><b>Evidence</b></h6><p> Here you will enter any links (URLs) to supporting documents/sites for the evidence you have provided. If you need to add more than one link, press the "+" sign.</p>'
+                'value' => '<h6><b>Evidence</b></h6><p> Here you will enter any links (URLs) to supporting documents/sites for the evidence you have provided. If you need to add more than one link, press the "+" sign.</p>',
+                'tab' => 'Evidence',
             ],
 
 
@@ -283,6 +287,7 @@ class EffectCrudController extends CrudController
 
                 // optional
                 'new_item_label'  => 'Add Evidence', // customize the text of the button
+                'tab' => 'Evidence',
 
             ]
         ]);
@@ -321,13 +326,14 @@ class EffectCrudController extends CrudController
 
                 // optional
                 'new_item_label'  => 'Add Beneficiary', // customize the text of the button
+                'tab' => 'Beneficiaries',
 
             ],
-            [   // CustomHTML
-                'name'  => 'separator_action',
-                'type'  => 'custom_html',
-                'value' => '<hr style="border: 1px solid #384c74;">'
-            ],
+            // [   // CustomHTML
+            //     'name'  => 'separator_action',
+            //     'type'  => 'custom_html',
+            //     'value' => '<hr style="border: 1px solid #384c74;">'
+            // ],
             [
                 'name'  => 'action_label',
                 'type'  => 'custom_html',
@@ -344,7 +350,8 @@ class EffectCrudController extends CrudController
                     <li>If the action has not yet been described click on the “+ Other” button and describe it.</li>
                 </ol>
                 <p>Remember that you can also edit the description of an action by going to the Action menu item on the left column and then click on “Edit” for the chosen action.</p>
-                 '
+                 ',
+                'tab' => 'Action',
             ],
             [
                 'type' => "relationship",
@@ -357,7 +364,32 @@ class EffectCrudController extends CrudController
                 ],
                 'placeholder' => "Select an Action",
                 'label' =>'',
+                'tab' => 'Action',
             ]
+        ]);
+
+        $this->crud->addSaveAction([
+            'name' => 'save_action_one',
+            'redirect' => function($crud, $request, $itemId) {
+             
+                $next_tabs = ['effect'=>'indicator', 'indicator'=>'evidence', 'evidence'=>'beneficiaries', 'beneficiaries'=>'action'];
+        
+                return $crud->route."/".$itemId."/edit#".$next_tabs[$request->current_tab];
+              
+            }, // what's the redirect URL, where the user will be taken after saving?
+        
+            // OPTIONAL:
+            'button_text' => 'Save and Next', // override text appearing on the button
+            // You can also provide translatable texts, for example:
+            // 'button_text' => trans('backpack::crud.save_action_one'),
+            'visible' => function($crud) {
+                return true;
+            }, // customize when this save action is visible for the current operation
+            'referrer_url' => function($crud, $request, $itemId) {
+               
+                return $crud->route;
+            }, // override http_referrer_url
+            'order' => 1, // change the order save actions are in
         ]);
     }
 

@@ -44,6 +44,7 @@ class Effect extends Model
         });
 
         $indicators_edit = [];
+        
         foreach ($effects_indicators as $effect_indicator) {
             $indicator_values = IndicatorValue::where('link_effect_indicator_id', '=', $effect_indicator['effect_indicator_id'])->get();
 
