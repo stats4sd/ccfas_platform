@@ -66,7 +66,8 @@ class Effect extends Model
     public function getBeneficiariesRepeatAttribute()
     {
         return $this->beneficiaries->map(function ($beneficiary, $key) {
-            return ['id'=>$beneficiary['id'],'beneficiary_type_id'=>$beneficiary['beneficiary_type_id'],'description'=>$beneficiary['description']];
+            $beneficiary_type = BeneficiaryType::find($beneficiary['beneficiary_type_id']);
+            return ['id'=>$beneficiary['id'],'beneficiary_type_id'=>$beneficiary_type->name,'description'=>$beneficiary['description']];
         });
     }
 
