@@ -307,11 +307,8 @@ class EffectCrudController extends CrudController
                     ],
                     [
                         'name'    => 'beneficiary_type_id',
-                        'type' => "select_from_array",
+                        'type' => "free_text",
                         'label' => 'B.1 Beneficiary type',
-                        // 'allows_null' => true,
-
-                        // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getBeneficieryTypes(),
 
                     ],
@@ -525,9 +522,14 @@ class EffectCrudController extends CrudController
     public function updateOrCreateBeneficiaries($repeat, $effect_id)
     {
         $beneficiaries_repeat = json_decode($repeat);
-
+        
         foreach ($beneficiaries_repeat as $beneficiary) {
-            //problem with file
+          
+            $beneficiary_type = BeneficiaryType::updateOrCreate(
+                ['name' => $beneficiary->beneficiary_type_id]
+            );
+            $beneficiary_type_id = $beneficiary_type->id;
+         
             if (!empty($beneficiary->description)) {
                 $new_beneficiary  = Beneficiary::updateOrCreate(
                     [
@@ -536,7 +538,7 @@ class EffectCrudController extends CrudController
                     [
                         'effect_id' =>  $effect_id,
                         'description' => $beneficiary->description,
-                        'beneficiary_type_id' => $beneficiary->beneficiary_type_id,
+                        'beneficiary_type_id' => $beneficiary_type_id,
                     ]
                 );
 
