@@ -8,6 +8,7 @@ use App\Models\GeoBoundary;
 use App\Http\Requests\ActionRequest;
 use App\Models\Activity;
 use App\Models\Effect;
+use App\Models\Milestone;
 use App\Models\Output;
 use App\Models\Subactivity;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -450,15 +451,7 @@ protected function setupCreateOperation()
 
     public function fetchMilestones()
     {
-        $form = collect(request()->input('form'))->pluck('value', 'name');
-       
-        return $this->fetch([
-            'model' => Subactivity::class,
-            'query' => function ($model) use($form) {
-                return $model->where('activity_id', '=', $form['activities[]']);
-                }
-              
-        ]);
+        return $this->fetch(Milestone::class);
     }
 
     public function fetchAims()
