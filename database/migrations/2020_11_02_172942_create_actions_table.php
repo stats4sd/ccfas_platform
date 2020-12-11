@@ -15,7 +15,9 @@ class CreateActionsTable extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->text('description');
+            $table->tinyInteger('completed')->default(0);
             $table->date('start');
             $table->date('end')->nullable();
             $table->timestamps();

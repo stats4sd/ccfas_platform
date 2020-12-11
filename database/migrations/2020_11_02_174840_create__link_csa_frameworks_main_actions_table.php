@@ -13,10 +13,10 @@ class CreateLinkCsaFrameworksMainActionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('_link_csa_frameworks_main_actions', function (Blueprint $table) {
+        Schema::create('_link_actions_main_actions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('csa_framework_id')->constrained('csa_frameworks')->onDelete('cascade');
             $table->foreignId('action_id')->constrained()->onDelete('cascade');
+            $table->foreignId('main_action_id')->constrained('main_actions')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateLinkCsaFrameworksMainActionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_link_csa_frameworks_main_actions');
+        Schema::dropIfExists('_link_actions_main_actions');
     }
 }

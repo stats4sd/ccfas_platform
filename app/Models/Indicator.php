@@ -34,6 +34,10 @@ class Indicator extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function effects()
+    {
+        return $this->belongsToMany(Effect::class, '_link_effects_indicators','effect_id', 'indicator_id')->withPivot('level_attribution_id')->withTimestamps();
+    }
 
     /*
     |--------------------------------------------------------------------------

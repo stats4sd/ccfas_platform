@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCsaFrameworksTable extends Migration
+class CreateTeamsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateCsaFrameworksTable extends Migration
      */
     public function up()
     {
-        Schema::create('csa_frameworks', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
-            $table->text('description');
+            $table->string('description')->unique();
             $table->timestamps();
-
         });
     }
 
@@ -29,6 +28,6 @@ class CreateCsaFrameworksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('csa_frameworks');
+        Schema::dropIfExists('teams');
     }
 }

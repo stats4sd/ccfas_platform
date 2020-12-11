@@ -13,9 +13,9 @@ class CreateLinkCsaFrameworksEnableEnvsTable extends Migration
      */
     public function up()
     {
-        Schema::create('_link_csa_frameworks_enable_envs', function (Blueprint $table) {
+        Schema::create('_link_actions_enable_envs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('csa_framework_id')->constrained('csa_frameworks')->onDelete('cascade');
+            $table->foreignId('action_id')->constrained()->onDelete('cascade');
             $table->foreignId('enable_env_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ class CreateLinkCsaFrameworksEnableEnvsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_link_csa_frameworks_enable_envs');
+        Schema::dropIfExists('_link_actions_enable_envs');
     }
 }

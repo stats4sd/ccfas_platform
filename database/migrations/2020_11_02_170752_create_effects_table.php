@@ -15,6 +15,7 @@ class CreateEffectsTable extends Migration
     {
         Schema::create('effects', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->text('description');
             $table->timestamps();
         });

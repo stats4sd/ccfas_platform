@@ -24,7 +24,7 @@ return [
     // ----
 
     // Project name. Shown in the window title.
-    'project_name' => 'Backpack Admin Panel',
+    'project_name' => 'CCAFS-EU-IFAD',
 
     // When clicking on the admin panel's top-left logo/name,
     // where should the user be redirected?
@@ -71,13 +71,13 @@ return [
     // ------
 
     // Menu logo. You can replace this with an <img> tag if you have a logo.
-    'project_logo'   => '<b>Back</b>pack',
+    'project_logo'   => '<b>CCAFS</b>-EU-IFAD',
 
     // Show / hide breadcrumbs on admin panel pages.
     'breadcrumbs' => true,
 
     // Horizontal navbar classes. Helps make the admin panel look similar to your project's design.
-    'header_class' => 'app-header bg-light border-0 navbar',
+    'header_class' => 'app-header navbar',
     // For background colors use: bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan, bg-white
     // For links to be visible on different background colors use: "navbar-dark", "navbar-light", "navbar-color"
 
@@ -90,7 +90,7 @@ return [
     // Try sidebar-hidden, sidebar-fixed, sidebar-compact, sidebar-lg-show
 
     // Sidebar element classes.
-    'sidebar_class' => 'sidebar sidebar-pills bg-light',
+    'sidebar_class' => 'sidebar',
     // Remove "sidebar-transparent" for standard sidebar look
     // Try "sidebar-light" or "sidebar-dark" for dark/light links
     // You can also add a background class like bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan
@@ -105,13 +105,13 @@ return [
     // change background color with bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan, bg-white
 
     // Developer or company name. Shown in footer.
-    'developer_name' => 'Cristian Tabacitu',
+    'developer_name' => 'Stat4SD',
 
     // Developer website. Link in footer. Type false if you want to hide it.
-    'developer_link' => 'http://tabacitu.ro',
+    'developer_link' => 'https://stats4sd.org/',
 
     // Show powered by Laravel Backpack in the footer? true/false
-    'show_powered_by' => true,
+    'show_powered_by' => false,
 
     // -------
     // SCRIPTS
@@ -173,7 +173,7 @@ return [
 
     // The prefix used in all base routes (the 'admin' in admin/dashboard)
     // You can make sure all your URLs use this prefix by using the backpack_url() helper instead of url()
-    'route_prefix' => 'admin',
+    'route_prefix' => 'ccafs',
 
     // The web middleware (group) used in all base & CRUD routes
     // If you've modified your "web" middleware group (ex: removed sessions), you can use a different
@@ -212,9 +212,9 @@ return [
     */
 
     // Fully qualified namespace of the User model
-    'user_model_fqn' => config('auth.providers.users.model'),
+    // 'user_model_fqn' => config('auth.providers.users.model'),
     // 'user_model_fqn' => App\User::class, // works on Laravel <= 7
-    // 'user_model_fqn' => App\Models\User::class, // works on Laravel >= 8
+    'user_model_fqn' => App\Models\User::class, // works on Laravel >= 8
 
     // The classes for the middleware to check if the visitor is an admin
     // Can be a single class or an array of classes
@@ -225,7 +225,7 @@ return [
     ],
 
     // Alias for that middleware
-    'middleware_key' => 'admin',
+    'middleware_key' => 'ccafs',
     // Note: It's recommended to use the backpack_middleware() helper everywhere, which pulls this key for you.
 
     // Username column for authentication

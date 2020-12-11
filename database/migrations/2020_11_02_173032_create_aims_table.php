@@ -15,7 +15,8 @@ class CreateAimsTable extends Migration
     {
         Schema::create('aims', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
+            $table->string('name');
+            $table->tinyInteger('is_other')->default(0);
             $table->timestamps();
         });
     }
