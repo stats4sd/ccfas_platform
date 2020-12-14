@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Aim;
-use App\Models\Product;
-use App\Models\GeoBoundary;
-use App\Http\Requests\ActionRequest;
-use App\Models\Activity;
+use App\Models\Team;
 use App\Models\Output;
+use App\Models\Product;
+use App\Models\Activity;
+use App\Models\GeoBoundary;
 use App\Models\Subactivity;
+use App\Http\Requests\ActionRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -47,17 +48,31 @@ class ActionCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        $this->crud->addFilter([ 
-            'type'  => 'simple',
-            'name'  => 'team_id',
-            'label' => 'Team'
-          ],
-          false,
-          function() { 
-            $teams = backpack_user()->teams;
-            
-            $this->crud->addClause('whereIn', 'team_id', $teams); 
-       
+        $this->crud->addFilter([
+            'name'  => 'teams',
+            'type'  => 'select2_multiple',
+            'label' => 'Teams'
+            ], function() {
+             
+                return Team::get()->pluck('name', 'id')->toArray();;
+
+            }, function($values) { // if the filter is active
+
+                $this->crud->addClause('whereIn', 'team_id',json_decode($values) );
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'subactivity',
+            'type'  => 'select2_multiple',
+            'label' => 'Outputs'
+            ], function() {
+             
+                return Output::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+
+
+                $this->crud->addClause('whereIn', 'name',json_decode($values));
         });
 
         $this->crud->addFilter([ 
@@ -71,6 +86,11 @@ class ActionCrudController extends CrudController
             $this->crud->addClause('where', 'completed', '0'); 
        
         });
+        if (!backpack_user()->is_admin){
+
+            $this->crud->denyAccess('delete');
+        }
+
 
         $this->crud->addColumns([
             [

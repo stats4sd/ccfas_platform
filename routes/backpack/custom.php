@@ -47,4 +47,5 @@ Route::group([
     Route::crud('disaggregation', 'DisaggregationCrudController');
     Route::crud('change', 'ChangeCrudController');
     Route::crud('milestone', 'MilestoneCrudController');
+    Route::crud('invitation', 'InvitationCrudController');
 }); // this should be the absolute last line of this file

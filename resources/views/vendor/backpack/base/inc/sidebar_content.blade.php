@@ -1,12 +1,19 @@
 <!-- This file is used to store sidebar items, starting with Backpack\Base 0.9.0 -->
 <!-- <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i> {{ trans('backpack::base.dashboard') }}</a></li> -->
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('effect?team_id=true') }}'><i class='fas fa-fire'></i> Effects</a></li>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('action?team_id=true') }}'><i class='fas fa-compass'></i> Actions</a></li>
-@if (backpack_user()->email=='lucia@stats4sd.org')
-
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='nav-icon la la-question'></i> Users</a></li>
-<li class='nav-item'><a class='nav-link' href='{{ backpack_url('team') }}'><i class='nav-icon la la-question'></i> Teams</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('effect') }}'><i class='fas fa-fire'></i> Effects</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('action') }}'><i class='fas fa-compass'></i> Actions</a></li>
+@if(backpack_user()->is_admin)
+<li class='nav-item nav-dropdown'>
+    <a class='nav-link nav-dropdown-toggle' href="#"><i class="	fas fa-server"></i> User Management</a>
+    <ul class="nav-dropdown-items">
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='fas fa-address-card'></i> Users</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('team') }}'><i class='fas fa-users'></i> Teams</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ backpack_url('role') }}"><i class="fas fa-id-badge"></i> <span>Roles</span></a></li>
+	  <li class="nav-item"><a class="nav-link" href="{{ backpack_url('permission') }}"><i class="fas fa-key"></i> <span>Permissions</span></a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('invitation') }}'><i class='fas fa-envelope'></i> Send an Invitation</a></li>
+    </ul>
+</li>
 
 <li class='nav-item nav-dropdown'>
     <a class='nav-link nav-dropdown-toggle' href="#"><i class="nav-icon fa fa-newspaper-o"></i>LogFrameworks</a>
@@ -59,5 +66,4 @@
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('country') }}'><i class='nav-icon la la-question'></i> Countries</a></li>
     </ul>
 </li>
-
 @endif
