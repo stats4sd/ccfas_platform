@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Team;
 use App\Models\Action;
+use App\Models\Change;
 use App\Models\Effect;
 use App\Models\Evidence;
 use App\Models\Indicator;
 use App\Models\Beneficiary;
+use App\Models\Disaggregation;
 use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
+use App\Models\IndicatorStatus;
 use App\Models\LevelAttribution;
+use Prologue\Alerts\Facades\Alert;
+use Spatie\Permission\Models\Role;
+
 use App\Models\LinkEffectIndicator;
 use App\Http\Requests\EffectRequest;
-use App\Models\Change;
-use App\Models\Disaggregation;
-use App\Models\IndicatorStatus;
-
 use function GuzzleHttp\json_decode;
-
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Redirect;
 
 /**
  * Class EffectCrudController
@@ -33,10 +36,11 @@ class EffectCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; edit as traitEdit; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
+    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -57,20 +61,27 @@ class EffectCrudController extends CrudController
      * @return void
      */
     protected function setupListOperation()
-    {
-        $this->crud->addFilter(
-            [
-                'type'  => 'simple',
-                'name'  => 'team_id',
-                'label' => 'Team'
-            ],
-            false,
-            function () {
-                $teams = backpack_user()->teams;
+    {      
 
-                $this->crud->addClause('whereIn', 'team_id', $teams);
-            }
-        );
+        $this->crud->addFilter([
+            'name'  => 'teams',
+            'type'  => 'select2_multiple',
+            'label' => 'Teams'
+            ], function() {
+             
+                return Team::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+
+                $this->crud->addClause('whereIn', 'team_id',json_decode($values));
+        });
+
+
+        if (!backpack_user()->is_admin){
+
+            $this->crud->denyAccess('delete');
+        }
+        
 
         $this->crud->addColumns([
             [
@@ -460,6 +471,18 @@ class EffectCrudController extends CrudController
         // do something after save
         return $response;
 
+    }
+
+    public function edit($id){
+        $effect = Effect::find($id);
+        $response = Gate::inspect('update', $effect);
+        if ($response->allowed()) {
+            $response = $this->traitEdit($id);
+            return $response;
+        } else {
+            Alert::add('error', $response->message())->flash();
+            return Redirect::back();
+        }
     }
 
     public function update(EffectRequest $request)
