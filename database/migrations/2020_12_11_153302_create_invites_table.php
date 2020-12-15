@@ -17,10 +17,7 @@ class CreateInvitesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->tinyInteger('active');
-            $table->rememberToken();
+            $table->tinyInteger('active')->default(0);
             $table->timestamps();
         });
     }

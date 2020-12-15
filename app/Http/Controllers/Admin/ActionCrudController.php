@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Aim;
 use App\Models\Team;
+use App\Models\Action;
 use App\Models\Output;
 use App\Models\Product;
 use App\Models\Activity;
 use App\Models\GeoBoundary;
 use App\Models\Subactivity;
+use Prologue\Alerts\Facades\Alert;
 use App\Http\Requests\ActionRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -23,7 +27,7 @@ class ActionCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { edit as traitEdit; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
@@ -70,9 +74,8 @@ class ActionCrudController extends CrudController
                 return Output::get()->pluck('name', 'id')->toArray();
 
             }, function($values) { // if the filter is active
-
-
-                $this->crud->addClause('whereIn', 'name',json_decode($values));
+                
+                $this->crud->addClause('whereIn', 'id',json_decode($values));
         });
 
         $this->crud->addFilter([ 
@@ -413,6 +416,19 @@ protected function setupCreateOperation()
         return $response;
         
     }
+
+    public function edit($id){
+        $action = Action::find($id);
+        $response = Gate::inspect('update', $action);
+        if ($response->allowed()) {
+            $response = $this->traitEdit($id);
+            return $response;
+        } else {
+            Alert::add('error', $response->message())->flash();
+            return Redirect::back();
+        }
+    }
+
 
     public function getOutputs()
     {

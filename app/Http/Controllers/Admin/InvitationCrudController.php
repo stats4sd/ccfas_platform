@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Team;
+use App\Models\User;
+use App\Mail\InviteUser;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\InvitationRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -14,7 +20,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class InvitationCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -57,8 +63,22 @@ class InvitationCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(InvitationRequest::class);
+        // CRUD::setFromDb(); // fields
+        CRUD::field('name');
+        CRUD::field('email');
+        CRUD::addField(
+        [   // select2_from_array
+            'name'        => 'teams',
+            'label'       => "Teams",
+            'type'        => 'select2_from_array',
+            'options'     => $this->getTeams(),
+            'allows_null' => false,
+            'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
+        ]
+        );
 
-        CRUD::setFromDb(); // fields
+
+
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -76,5 +96,35 @@ class InvitationCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function store(InvitationRequest $request)
+    {
+        // do something before validation, before save, before everything
+        $response = $this->traitStore();
+        $invitation = $this->crud->getCurrentEntry();
+        $text_password = Str::random(8);
+        $password = Hash::make($text_password);
+      
+        $user = User::create([
+            'name' => $invitation['name'],
+            'email' => $invitation['email'],
+            'password'=> $password,
+
+        ]);
+        
+        
+        $user->save();
+        $user->teams()->sync($request['teams']); 
+        
+        Mail::to(backpack_user())->send(new InviteUser($user, $text_password));
+        // do something after save
+        return $response;
+
+    }
+
+    public function getTeams()
+    {
+        return Team::get()->pluck('name', 'id');
     }
 }

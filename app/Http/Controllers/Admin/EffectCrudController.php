@@ -14,13 +14,14 @@ use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
 use App\Models\IndicatorStatus;
 use App\Models\LevelAttribution;
+use Prologue\Alerts\Facades\Alert;
 use Spatie\Permission\Models\Role;
 
 use App\Models\LinkEffectIndicator;
-
 use App\Http\Requests\EffectRequest;
 use function GuzzleHttp\json_decode;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -35,10 +36,11 @@ class EffectCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; edit as traitEdit; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
+    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -60,7 +62,6 @@ class EffectCrudController extends CrudController
      */
     protected function setupListOperation()
     {      
-        $effect = $this->crud->getCurrentEntry();
 
         $this->crud->addFilter([
             'name'  => 'teams',
@@ -80,12 +81,7 @@ class EffectCrudController extends CrudController
 
             $this->crud->denyAccess('delete');
         }
-
-        $user = backpack_user()->givePermissionTo('edit');
         
-        dd($user);
-      
-
 
         $this->crud->addColumns([
             [
@@ -440,9 +436,20 @@ class EffectCrudController extends CrudController
 
     }
 
+    public function edit($id){
+        $effect = Effect::find($id);
+        $response = Gate::inspect('update', $effect);
+        if ($response->allowed()) {
+            $response = $this->traitEdit($id);
+            return $response;
+        } else {
+            Alert::add('error', $response->message())->flash();
+            return Redirect::back();
+        }
+    }
+
     public function update(EffectRequest $request)
     {
-    
         // do something before validation, before save, before everything
 
         $response = $this->traitUpdate();
