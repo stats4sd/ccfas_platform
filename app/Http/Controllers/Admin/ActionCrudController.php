@@ -11,7 +11,6 @@ use App\Models\Activity;
 use App\Models\GeoBoundary;
 use App\Models\Effect;
 use App\Models\Milestone;
-use App\Models\Output;
 use App\Models\Subactivity;
 use Prologue\Alerts\Facades\Alert;
 use App\Http\Requests\ActionRequest;
