@@ -44,6 +44,7 @@ class Effect extends Model
         });
 
         $indicators_edit = [];
+        
         foreach ($effects_indicators as $effect_indicator) {
             $indicator_values = IndicatorValue::where('link_effect_indicator_id', '=', $effect_indicator['effect_indicator_id'])->get();
 
@@ -65,7 +66,8 @@ class Effect extends Model
     public function getBeneficiariesRepeatAttribute()
     {
         return $this->beneficiaries->map(function ($beneficiary, $key) {
-            return ['id'=>$beneficiary['id'],'beneficiary_type_id'=>$beneficiary['beneficiary_type_id'],'description'=>$beneficiary['description']];
+            $beneficiary_type = BeneficiaryType::find($beneficiary['beneficiary_type_id']);
+            return ['id'=>$beneficiary['id'],'beneficiary_type_id'=>$beneficiary_type->name,'description'=>$beneficiary['description']];
         });
     }
 
