@@ -68,16 +68,76 @@ class ActionCrudController extends CrudController
         });
 
         $this->crud->addFilter([
-            'name'  => 'subactivity',
+            'name'  => 'outputs',
             'type'  => 'select2_multiple',
-            'label' => 'Outputs'
+            'label' => 'Ouputs'
             ], function() {
              
                 return Output::get()->pluck('name', 'id')->toArray();
 
             }, function($values) { // if the filter is active
+                foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
+                    $this->crud->query->whereHas('activities', function ($query) use ($value) {
+
+                        $query->where('output_id', $value);
+                    });
+
+                });
+            }
+          
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'activities',
+            'type'  => 'select2_multiple',
+            'label' => 'Activities'
+            ], function() {
+             
+                return Activity::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+                foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
+                    $query->where('activity_id', $value);
+                });
+            }
+          
+        });
+
+
+        $this->crud->addFilter([
+            'name'  => 'subactivities',
+            'type'  => 'select2_multiple',
+            'label' => 'Subactivities'
+            ], function() {
+             
+                return Subactivity::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
                 
-                $this->crud->addClause('whereIn', 'id',json_decode($values));
+                foreach (json_decode($values) as $key => $value) {
+                    $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
+                        $query->where('subactivity_id', $value);
+                    });
+                }
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'milestones',
+            'type'  => 'select2_multiple',
+            'label' => 'Milestones'
+            ], function() {
+             
+                return Milestone::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+                
+                foreach (json_decode($values) as $key => $value) {
+                    $this->crud->query = $this->crud->query->whereHas('milestones', function ($query) use ($value) {
+                        $query->where('milestone_id', $value);
+                    });
+                }
         });
 
         $this->crud->addFilter([ 
@@ -202,7 +262,8 @@ protected function setupCreateOperation()
                 'inline_create' => [ 'entity' => 'geoboundary' ],
                 'placeholder' => "Select an Geo Boundaries",  
                 'label' => '',
-                'tab' => 'Action'
+                'tab' => 'Action',
+                'allows_multiple' => true,
               
             ],
             [   // CustomHTML

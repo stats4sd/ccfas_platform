@@ -6,17 +6,21 @@ use App\Models\Team;
 use App\Models\Action;
 use App\Models\Change;
 use App\Models\Effect;
+use App\Models\Output;
+use App\Models\Activity;
 use App\Models\Evidence;
 use App\Models\Indicator;
+use App\Models\Milestone;
 use App\Models\Beneficiary;
+use App\Models\Subactivity;
 use App\Models\Disaggregation;
 use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
+
 use App\Models\IndicatorStatus;
 use App\Models\LevelAttribution;
 use Prologue\Alerts\Facades\Alert;
 use Spatie\Permission\Models\Role;
-
 use App\Models\LinkEffectIndicator;
 use App\Http\Requests\EffectRequest;
 use function GuzzleHttp\json_decode;
@@ -74,6 +78,92 @@ class EffectCrudController extends CrudController
             }, function($values) { // if the filter is active
 
                 $this->crud->addClause('whereIn', 'team_id',json_decode($values));
+        });
+
+        
+        $this->crud->addFilter([
+            'name'  => 'outputs',
+            'type'  => 'select2_multiple',
+            'label' => 'Ouputs'
+            ], function() {
+             
+                return Output::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+                foreach (json_decode($values) as $key => $value) {
+                    $this->crud->query = $this->crud->query->whereHas('actions', function($q) use ($value) {
+                        $q->whereHas('subactivities', function( $q) use ($value) {
+                            $q->whereHas('activity', function( $q) use ($value) {
+                                $q->where('output_id', $value);
+                            });
+                        });
+                    });
+            }
+          
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'activities',
+            'type'  => 'select2_multiple',
+            'label' => 'Activities'
+            ], function() {
+             
+                return Activity::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+                foreach (json_decode($values) as $key => $value) {
+                    $this->crud->query = $this->crud->query->whereHas('actions', function($q) use ($value) {
+                        $q->whereHas('subactivities', function($q) use ($value) {
+
+                            $q->where('activity_id', $value);
+                           
+                        });
+                    });
+            }
+          
+        });
+
+
+        $this->crud->addFilter([
+            'name'  => 'subactivities',
+            'type'  => 'select2_multiple',
+            'label' => 'Subactivities'
+            ], function() {
+             
+                return Subactivity::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+                
+                foreach (json_decode($values) as $key => $value) {
+                    $this->crud->query = $this->crud->query->whereHas('actions', function( $q) use ($value) {
+                        $q->whereHas('subactivities', function( $q) use ($value) {
+                          
+                            $q->where('subactivity_id', $value);
+                            
+                        });
+                    });
+                }
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'milestones',
+            'type'  => 'select2_multiple',
+            'label' => 'Milestones'
+            ], function() {
+             
+                return Milestone::get()->pluck('name', 'id')->toArray();
+
+            }, function($values) { // if the filter is active
+                
+                foreach (json_decode($values) as $key => $value) {
+                    $this->crud->query = $this->crud->query->whereHas('actions', function( $q) use ($value) {
+                        $q->whereHas('milestones', function( $q) use ($value) {
+                          
+                            $q->where('milestone_id', $value);
+                            
+                        });
+                    });
+                }
         });
 
 
@@ -181,13 +271,13 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'value_qualitative',
                         'type'    => 'text',
-                        'label'   => 'I.2 If the indicator you have chosen is qualitative, please describe that changes captures the size of effect you are reporting. This is how the indicator “changed” from its original condition',
+                        'label'   => 'I.2 If the indicator you have chosen is QUALITATIVE, please describe the changes you are reporting. This is how the indicator “changed” from its original condition',
 
                     ],
                     [
                         'name'    => 'baseline_qualitative',
                         'type'   =>'text',
-                        'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status at baseline?<p></p>',
+                        'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status before the action took place?',
                     ],
                     [   // CustomHTML
                         'name'  => 'separator',
@@ -379,7 +469,7 @@ class EffectCrudController extends CrudController
                     if(empty($request->actions)){
                         $new_action = Action::create([
                             'team_id' => $request->team_id,
-                            'description' => 'add a description',
+                            'description' => ' ',
                             'completed' => 0,
                             'start' => date("Y/m/d")
                         ]);
@@ -433,7 +523,7 @@ class EffectCrudController extends CrudController
 
     public function getBeneficieryTypes()
     {
-        return BeneficiaryType::get()->pluck('name', 'id');
+        return BeneficiaryType::where('is_other', 0)->get()->pluck('name', 'id');
     }
 
     public function getIndicators()
@@ -545,11 +635,18 @@ class EffectCrudController extends CrudController
     public function updateOrCreateBeneficiaries($repeat, $effect_id)
     {
         $beneficiaries_repeat = json_decode($repeat);
+        $beneficiary_name = BeneficiaryType::get()->pluck('name')->toArray();
         
         foreach ($beneficiaries_repeat as $beneficiary) {
+            if ( in_array($beneficiary->beneficiary_type_id, $beneficiary_name)) {
+                $is_other = false;
+            } else {
+                $is_other = true;
+            }
           
             $beneficiary_type = BeneficiaryType::updateOrCreate(
-                ['name' => $beneficiary->beneficiary_type_id]
+                ['name' => $beneficiary->beneficiary_type_id],
+                ['is_other' => $is_other] 
             );
             $beneficiary_type_id = $beneficiary_type->id;
          

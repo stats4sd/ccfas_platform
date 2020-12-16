@@ -15,7 +15,6 @@ class CreateGeoBoundariesTable extends Migration
     {
         Schema::create('geo_boundaries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('country_id')->constrained('countries')->onDelete('cascade');
             $table->string('name')->unique();
             $table->text('description');
             $table->timestamps();
