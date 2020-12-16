@@ -26,7 +26,7 @@ class AddPwChangedToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->bolean('pw_changed');
+            $table->dropColumn('pw_changed');
         });
     }
 }
