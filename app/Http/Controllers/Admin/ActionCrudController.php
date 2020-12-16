@@ -36,7 +36,7 @@ class ActionCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -48,7 +48,7 @@ class ActionCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -58,51 +58,40 @@ class ActionCrudController extends CrudController
             'name'  => 'teams',
             'type'  => 'select2_multiple',
             'label' => 'Teams'
-            ], function() {
-             
-                return Team::get()->pluck('name', 'id')->toArray();;
+        ], function () {
+            return Team::get()->pluck('name', 'id')->toArray();
+            ;
+        }, function ($values) { // if the filter is active
 
-            }, function($values) { // if the filter is active
-
-                $this->crud->addClause('whereIn', 'team_id',json_decode($values) );
+            $this->crud->addClause('whereIn', 'team_id', json_decode($values));
         });
 
         $this->crud->addFilter([
             'name'  => 'outputs',
             'type'  => 'select2_multiple',
             'label' => 'Ouputs'
-            ], function() {
-             
-                return Output::get()->pluck('name', 'id')->toArray();
-
-            }, function($values) { // if the filter is active
-                foreach (json_decode($values) as $key => $value) {
-                $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
-                    $this->crud->query->whereHas('activities', function ($query) use ($value) {
-
-                        $query->where('output_id', $value);
-                    });
-
+        ], function () {
+            return Output::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('activities', function ($query) use ($value) {
+                    $query->where('output_id', $value);
                 });
             }
-          
         });
 
         $this->crud->addFilter([
             'name'  => 'activities',
             'type'  => 'select2_multiple',
             'label' => 'Activities'
-            ], function() {
-             
-                return Activity::get()->pluck('name', 'id')->toArray();
-
-            }, function($values) { // if the filter is active
-                foreach (json_decode($values) as $key => $value) {
-                $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
+        ], function () {
+            return Activity::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('activities', function ($query) use ($value) {
                     $query->where('activity_id', $value);
                 });
             }
-          
         });
 
 
@@ -110,49 +99,44 @@ class ActionCrudController extends CrudController
             'name'  => 'subactivities',
             'type'  => 'select2_multiple',
             'label' => 'Subactivities'
-            ], function() {
-             
-                return Subactivity::get()->pluck('name', 'id')->toArray();
+        ], function () {
+            return Subactivity::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
 
-            }, function($values) { // if the filter is active
-                
-                foreach (json_decode($values) as $key => $value) {
-                    $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
-                        $query->where('subactivity_id', $value);
-                    });
-                }
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('subactivities', function ($query) use ($value) {
+                    $query->where('subactivity_id', $value);
+                });
+            }
         });
 
         $this->crud->addFilter([
             'name'  => 'milestones',
             'type'  => 'select2_multiple',
             'label' => 'Milestones'
-            ], function() {
-             
-                return Milestone::get()->pluck('name', 'id')->toArray();
+        ], function () {
+            return Milestone::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
 
-            }, function($values) { // if the filter is active
-                
-                foreach (json_decode($values) as $key => $value) {
-                    $this->crud->query = $this->crud->query->whereHas('milestones', function ($query) use ($value) {
-                        $query->where('milestone_id', $value);
-                    });
-                }
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('milestones', function ($query) use ($value) {
+                    $query->where('milestone_id', $value);
+                });
+            }
         });
 
-        $this->crud->addFilter([ 
-            'type'  => 'simple',
-            'name'  => 'completed',
-            'label' => 'Not Completed'
-          ],
-          false,
-          function() { 
-            
-            $this->crud->addClause('where', 'completed', '0'); 
-       
-        });
-        if (!backpack_user()->is_admin){
-
+        $this->crud->addFilter(
+            [
+                'type'  => 'simple',
+                'name'  => 'completed',
+                'label' => 'Not Completed'
+            ],
+            false,
+            function () {
+                $this->crud->addClause('where', 'completed', '0');
+            }
+        );
+        if (!backpack_user()->is_admin) {
             $this->crud->denyAccess('delete');
         }
 
@@ -160,9 +144,9 @@ class ActionCrudController extends CrudController
         $this->crud->addColumns([
             [
                 'label'     => "Team",
-                'type'      => 'select', 
+                'type'      => 'select',
                 'name'      => 'team_id',
-                'entity'    => 'team', 
+                'entity'    => 'team',
                 'model'     => "App\Models\Team",
                 'attribute' => 'name',
 
@@ -181,25 +165,24 @@ class ActionCrudController extends CrudController
             ],
 
         ]);
-
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
-protected function setupCreateOperation()
+    protected function setupCreateOperation()
     {
         CRUD::setValidation(ActionRequest::class);
 
-        CRUD::addFields([ 
+        CRUD::addFields([
             [   // CustomHTML
                 'name'  => 'separator',
                 'type'  => 'custom_html',
                 'value' => '<h6><b>The "Action" that produced the effect </b></h6>
-                <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope 
+                <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope
 
                 This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture.
                 Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up. </p>
@@ -209,18 +192,18 @@ protected function setupCreateOperation()
             [  // Select
                 'label'     => "Team",
                 'type'      => 'select',
-                'name'      => 'team_id', 
-                'entity'    => 'team', 
-                'model'     => "App\Models\Team", 
-                'attribute' => 'name', 
+                'name'      => 'team_id',
+                'entity'    => 'team',
+                'model'     => "App\Models\Team",
+                'attribute' => 'name',
                 // optional - force the related options to be a custom query, instead of all();
                 'options'   => (function ($query) {
                     $teams =  backpack_user()->teams()->pluck('teams.id')->toArray();
-                   
+
                     return $query->whereIn('id', $teams)->get();
-                 }), 
+                }),
                 'tab' => 'Action'
-                
+
             ],
             [
                 'type' => "hidden",
@@ -260,18 +243,18 @@ protected function setupCreateOperation()
                 'ajax' => true,
                 'minimum_input_length' => 0,
                 'inline_create' => [ 'entity' => 'geoboundary' ],
-                'placeholder' => "Select an Geo Boundaries",  
+                'placeholder' => "Select an Geo Boundaries",
                 'label' => '',
                 'tab' => 'Action',
                 'allows_multiple' => true,
-              
+
             ],
             [   // CustomHTML
                 'name'  => 'details_action',
                 'type'  => 'custom_html',
                 'value' => '<h6><b>Details of the Action </b></h6>
                 <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope </p>
-                <p>This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture. 
+                <p>This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture.
                 Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up. </p>
                 ',
                 'tab' => 'Details of the Action'
@@ -318,7 +301,7 @@ protected function setupCreateOperation()
                 'attribute' =>'name_display',
                 'label' => 'Select a product type and describe the specific product generated by the action ',
                 'tab' => 'Products generated'
-                
+
             ],
             [   // CustomHTML
                 'name'  => 'logframe_details',
@@ -329,12 +312,12 @@ protected function setupCreateOperation()
             ],
             [
                 'type' => "select_from_array",
-                'name' => 'outputs',
+                'name' => 'output_id',
                 'placeholder' => "Select an Output",
                 'label' => 'Select the Output under which this action falls',
-                'options'   => $this->getOutputs(),   
+                'options'   => $this->getOutputs(),
                 'tab' => 'Log Framework'
-                
+
             ],
             [
                 'type' => "select2_from_ajax_multiple",
@@ -342,7 +325,7 @@ protected function setupCreateOperation()
                 'placeholder' => "Select an Activity",
                 'label' => 'Select the Activity under which this action falls ',
                 'minimum_input_length' => 0,
-                'multiple' => false, 
+                'multiple' => false,
                 'dependecies' => ['output_id'],
                 'entity'      => 'activities', // the method that defines the relationship in your Model
                 'attribute'   => "name", // foreign key attribute that is shown to user
@@ -358,10 +341,10 @@ protected function setupCreateOperation()
                 'placeholder' => "Select a Subactivity",
                 'label' => 'Select the sub activity under which this action falls ',
                 'minimum_input_length' => 0,
-                'multiple' => true, 
-                'ajax' => true, 
+                'multiple' => true,
+                'ajax' => true,
                 'dependecies' => ['activity_id'],
-                'tab' => 'Log Framework'  
+                'tab' => 'Log Framework'
             ],
             [
                 'type' => "relationship",
@@ -369,9 +352,9 @@ protected function setupCreateOperation()
                 'placeholder' => "Select a Milestone",
                 'label' => 'Select the milestones associated with this activity ',
                 'minimum_input_length' => 0,
-                'ajax' => true, 
+                'ajax' => true,
                 'dependecies' => ['activity_id'],
-                'tab' => 'Log Framework' 
+                'tab' => 'Log Framework'
             ],
             [   // CustomHTML
                 'name'  => 'csa_framework_details',
@@ -386,32 +369,32 @@ protected function setupCreateOperation()
             [
                 'type' => "relationship",
                 'name' => 'pillars',
-                'placeholder' => "Select Pillars",  
+                'placeholder' => "Select Pillars",
                 'label' => 'To what of the following pillars of CSA does the reported effect contribute?',
                 'hint' => 'You can select more than one ',
                 'tab' => 'CSA Framework'
-              
+
             ],
             [
                 'type' => "relationship",
                 'name' => 'practices',
-                'placeholder' => "Select Practices",  
+                'placeholder' => "Select Practices",
                 'label' => 'Which of the entry points of the "Practices Thematic Area" are associated with the effect reported?',
                 'hint' => 'You can select more than one ',
-                'tab' => 'CSA Framework' 
+                'tab' => 'CSA Framework'
             ],
             [
                 'type' => "relationship",
                 'name' => 'systems',
-                'placeholder' => "Select Systems",  
+                'placeholder' => "Select Systems",
                 'label' => 'Which of the entry points of the "Systems approaches Thematic Area" are associated with the effect reported?',
                 'hint' => 'You can select more than one ',
-                'tab' => 'CSA Framework' 
+                'tab' => 'CSA Framework'
             ],
             [
                 'type' => "relationship",
                 'name' => 'enable_envs',
-                'placeholder' =>'Select Enabling environments Thematic Area',  
+                'placeholder' =>'Select Enabling environments Thematic Area',
                 'label' => 'Which of the entry points of the "Enabling environments Thematic Area" are associated with the effect reported?',
                 'hint' => 'You can select more than one ',
                 'tab' => 'CSA Framework'
@@ -419,15 +402,15 @@ protected function setupCreateOperation()
             [
                 'type' => "relationship",
                 'name' => 'elements',
-                'placeholder' => "Select Elements",  
+                'placeholder' => "Select Elements",
                 'label' => 'What CSA main elements of CSA are included in this work? ',
                 'hint' => 'You can select more than one ',
-                'tab' => 'CSA Framework'   
+                'tab' => 'CSA Framework'
             ],
             [
                 'type' => "relationship",
                 'name' => 'main_actions',
-                'placeholder' => "Select Main Actions",  
+                'placeholder' => "Select Main Actions",
                 'label' => 'To what of the major actions needed to implement CSA is this effect likely to contribute? ',
                 'hint' => 'You can select more than one ',
                 'tab' => 'CSA Framework'
@@ -435,7 +418,7 @@ protected function setupCreateOperation()
             [
                 'type' => "relationship",
                 'name' => 'investments',
-                'placeholder' => "Select Investments",  
+                'placeholder' => "Select Investments",
                 'label' => 'What CSA "areas of investment" are part of this work?',
                 'hint' => 'You can select more than one ',
                 'tab' => 'CSA Framework'
@@ -444,30 +427,26 @@ protected function setupCreateOperation()
 
         $this->crud->addSaveAction([
             'name' => 'save_action_and_next',
-            'redirect' => function($crud, $request, $itemId) {
-                if($request->current_tab != 'csa-framework'){
-                  
-                    $next_tabs = ['action'=>'details-of-the-action', 
-                    'details-of-the-action'=>'products-generated', 
-                    'products-generated'=>'log-framework', 
-                    'log-framework'=>'csa-framework'];
+            'redirect' => function ($crud, $request, $itemId) {
+                if ($request->current_tab != 'csa-framework') {
+                    $next_tabs = ['action'=>'details-of-the-action',
+                        'details-of-the-action'=>'products-generated',
+                        'products-generated'=>'log-framework',
+                        'log-framework'=>'csa-framework'];
                     return $crud->route."/".$itemId."/edit#".$next_tabs[$request->current_tab];
-                
-                }else{
+                } else {
                     return $crud->route;
                 }
-             
             }, // what's the redirect URL, where the user will be taken after saving?
-        
+
             // OPTIONAL:
             'button_text' => 'Save and Next', // override text appearing on the button
             // You can also provide translatable texts, for example:
             // 'button_text' => trans('backpack::crud.save_action_one'),
-            'visible' => function($crud) {
+            'visible' => function ($crud) {
                 return true;
             }, // customize when this save action is visible for the current operation
-            'referrer_url' => function($crud, $request, $itemId) {
-               
+            'referrer_url' => function ($crud, $request, $itemId) {
                 return $crud->route;
             }, // override http_referrer_url
             // 'order' => 1, // change the order save actions are in
@@ -476,7 +455,7 @@ protected function setupCreateOperation()
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
@@ -496,10 +475,10 @@ protected function setupCreateOperation()
 
         // do something after save
         return $response;
-        
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $action = Action::find($id);
         $response = Gate::inspect('update', $action);
         if ($response->allowed()) {
@@ -514,7 +493,7 @@ protected function setupCreateOperation()
 
     public function getOutputs()
     {
-        return Output::get()->pluck('name','id');
+        return Output::get()->pluck('name', 'id');
     }
 
     public function fetchEffects()
@@ -525,24 +504,24 @@ protected function setupCreateOperation()
     public function fetchActivity()
     {
         $form = collect(request()->input('form'))->pluck('value', 'name');
-       
+
         return $this->fetch([
             'model' => Activity::class,
-            'query' => function ($model) use($form) {
+            'query' => function ($model) use ($form) {
                 return $model->where('output_id', '=', $form['outputs']);
-                }
+            }
         ]);
     }
 
     public function fetchSubactivities()
     {
         $form = collect(request()->input('form'))->pluck('value', 'name');
-       
+
         return $this->fetch([
             'model' => Subactivity::class,
-            'query' => function ($model) use($form) {
+            'query' => function ($model) use ($form) {
                 return $model->where('activity_id', '=', $form['activities[]']);
-                }
+            }
         ]);
     }
 
@@ -556,7 +535,7 @@ protected function setupCreateOperation()
         return $this->fetch([
             'model' => Aim::class,
             'query' => function ($model) {
-            return $model->where('is_other', '=', false);
+                return $model->where('is_other', '=', false);
             }
         ]);
     }
@@ -573,13 +552,13 @@ protected function setupCreateOperation()
     protected function setupInlineCreateOperation()
     {
         $this->crud->removeAllFields();
-      
-        CRUD::addFields([ 
+
+        CRUD::addFields([
             [   // CustomHTML
                 'name'  => 'separator',
                 'type'  => 'custom_html',
                 'value' => '<h6><b>The "Action" that produced the effect </b></h6>
-                <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope 
+                <p>In the next section you will describe the action in more detail: the objective, the affected agents, and details about its scope
 
                 This will allow us to build a landscape of the actions and those affected. This picture will be overlaid on the project Logframe and the frameworks that describe Climate Smart Agriculture.
                 Please be detailed in the description of objectives, effects and agents affected. The information you provide will be useful only if there is evidence that backs it up. </p>
@@ -588,23 +567,23 @@ protected function setupCreateOperation()
             [  // Select
                 'label'     => "Team",
                 'type'      => 'select',
-                'name'      => 'team_id', 
-                'entity'    => 'team', 
-                'model'     => "App\Models\Team", 
-                'attribute' => 'name', 
+                'name'      => 'team_id',
+                'entity'    => 'team',
+                'model'     => "App\Models\Team",
+                'attribute' => 'name',
                 // optional - force the related options to be a custom query, instead of all();
                 'options'   => (function ($query) {
                     $teams =  backpack_user()->teams()->pluck('teams.id')->toArray();
-                   
+
                     return $query->whereIn('id', $teams)->get();
-                 }), 
-                
+                }),
+
             ],
             [
                 'name'          => 'description',
                 'label'         => 'Provide a description of the action you are reporting. There is no limit to the amount of information you can provide. ',
                 'type'          => 'textarea',
-                
+
             ],
             [
                 'name'          => 'start',
@@ -624,6 +603,5 @@ protected function setupCreateOperation()
                 'value' => '0'
             ],
         ]);
-            
     }
 }
