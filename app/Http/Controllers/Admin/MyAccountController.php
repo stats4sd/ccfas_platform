@@ -51,6 +51,7 @@ class MyAccountController extends Controller
     {
         $user = $this->guard()->user();
         $user->password = Hash::make($request->new_password);
+        $user->pw_changed = $request->pw_changed;
 
         if ($user->save()) {
             Alert::success(trans('backpack::base.account_updated'))->flash();

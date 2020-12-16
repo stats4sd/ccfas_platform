@@ -96,6 +96,9 @@
 
                 {!! csrf_field() !!}
 
+                {{-- Hidden flag to ensure users update their passwords --}}
+                <input type="hidden" name="pw_changed" value=1>
+
                 <div class="card padding-10">
 
                     <div class="card-header">
