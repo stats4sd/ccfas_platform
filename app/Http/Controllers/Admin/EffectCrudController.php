@@ -65,62 +65,49 @@ class EffectCrudController extends CrudController
      * @return void
      */
     protected function setupListOperation()
-    {      
-
+    {
         $this->crud->addFilter([
             'name'  => 'teams',
             'type'  => 'select2_multiple',
             'label' => 'Teams'
-            ], function() {
-             
-                return Team::get()->pluck('name', 'id')->toArray();
+        ], function () {
+            return Team::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
 
-            }, function($values) { // if the filter is active
-
-                $this->crud->addClause('whereIn', 'team_id',json_decode($values));
+            $this->crud->addClause('whereIn', 'team_id', json_decode($values));
         });
 
-        
+
         $this->crud->addFilter([
             'name'  => 'outputs',
             'type'  => 'select2_multiple',
             'label' => 'Ouputs'
-            ], function() {
-             
-                return Output::get()->pluck('name', 'id')->toArray();
-
-            }, function($values) { // if the filter is active
-                foreach (json_decode($values) as $key => $value) {
-                    $this->crud->query = $this->crud->query->whereHas('actions', function($q) use ($value) {
-                        $q->whereHas('subactivities', function( $q) use ($value) {
-                            $q->whereHas('activity', function( $q) use ($value) {
-                                $q->where('output_id', $value);
-                            });
-                        });
+        ], function () {
+            return Output::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('activities', function ($q) use ($value) {
+                        $q->where('output_id', $value);
                     });
+                });
             }
-          
         });
 
         $this->crud->addFilter([
             'name'  => 'activities',
             'type'  => 'select2_multiple',
             'label' => 'Activities'
-            ], function() {
-             
-                return Activity::get()->pluck('name', 'id')->toArray();
-
-            }, function($values) { // if the filter is active
-                foreach (json_decode($values) as $key => $value) {
-                    $this->crud->query = $this->crud->query->whereHas('actions', function($q) use ($value) {
-                        $q->whereHas('subactivities', function($q) use ($value) {
-
-                            $q->where('activity_id', $value);
-                           
-                        });
+        ], function () {
+            return Activity::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('activities', function ($q) use ($value) {
+                        $q->where('activity_id', $value);
                     });
+                });
             }
-          
         });
 
 
@@ -128,50 +115,41 @@ class EffectCrudController extends CrudController
             'name'  => 'subactivities',
             'type'  => 'select2_multiple',
             'label' => 'Subactivities'
-            ], function() {
-             
-                return Subactivity::get()->pluck('name', 'id')->toArray();
+        ], function () {
+            return Subactivity::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
 
-            }, function($values) { // if the filter is active
-                
-                foreach (json_decode($values) as $key => $value) {
-                    $this->crud->query = $this->crud->query->whereHas('actions', function( $q) use ($value) {
-                        $q->whereHas('subactivities', function( $q) use ($value) {
-                          
-                            $q->where('subactivity_id', $value);
-                            
-                        });
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('subactivities', function ($q) use ($value) {
+                        $q->where('subactivity_id', $value);
                     });
-                }
+                });
+            }
         });
 
         $this->crud->addFilter([
             'name'  => 'milestones',
             'type'  => 'select2_multiple',
             'label' => 'Milestones'
-            ], function() {
-             
-                return Milestone::get()->pluck('name', 'id')->toArray();
+        ], function () {
+            return Milestone::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
 
-            }, function($values) { // if the filter is active
-                
-                foreach (json_decode($values) as $key => $value) {
-                    $this->crud->query = $this->crud->query->whereHas('actions', function( $q) use ($value) {
-                        $q->whereHas('milestones', function( $q) use ($value) {
-                          
-                            $q->where('milestone_id', $value);
-                            
-                        });
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('milestones', function ($q) use ($value) {
+                        $q->where('milestone_id', $value);
                     });
-                }
+                });
+            }
         });
 
 
-        if (!backpack_user()->is_admin){
-
+        if (!backpack_user()->is_admin) {
             $this->crud->denyAccess('delete');
         }
-        
+
 
         $this->crud->addColumns([
             [
@@ -287,7 +265,7 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'value_quantitative',
                         'type'    => 'number',
-                       'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
+                        'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
                     ],
                     [
                         'name'    => 'baseline_quantitative',
@@ -458,15 +436,12 @@ class EffectCrudController extends CrudController
 
         $this->crud->addSaveAction([
             'name' => 'save_action_and_next',
-            'redirect' => function($crud, $request, $itemId) {
-                if($request->current_tab != 'action'){
-                  
+            'redirect' => function ($crud, $request, $itemId) {
+                if ($request->current_tab != 'action') {
                     $next_tabs = ['effect'=>'indicators', 'indicators'=>'evidence', 'evidence'=>'beneficiaries', 'beneficiaries'=>'action'];
                     return $crud->route."/".$itemId."/edit#".$next_tabs[$request->current_tab];
-                
-                }else{
-
-                    if(empty($request->actions)){
+                } else {
+                    if (empty($request->actions)) {
                         $new_action = Action::create([
                             'team_id' => $request->team_id,
                             'description' => ' ',
@@ -475,24 +450,22 @@ class EffectCrudController extends CrudController
                         ]);
                         $new_action->save();
                         $effect = Effect::find($itemId);
-                        $effect->actions()->sync($new_action->id);    
-                        return 'ccafs/action/'. $new_action->id .'/edit';  
+                        $effect->actions()->sync($new_action->id);
+                        return 'ccafs/action/'. $new_action->id .'/edit';
                     }
-               
-                        return $crud->route;
+
+                    return $crud->route;
                 }
-             
             }, // what's the redirect URL, where the user will be taken after saving?
-        
+
             // OPTIONAL:
             'button_text' => 'Save and Next', // override text appearing on the button
             // You can also provide translatable texts, for example:
             // 'button_text' => trans('backpack::crud.save_action_one'),
-            'visible' => function($crud) {
+            'visible' => function ($crud) {
                 return true;
             }, // customize when this save action is visible for the current operation
-            'referrer_url' => function($crud, $request, $itemId) {
-               
+            'referrer_url' => function ($crud, $request, $itemId) {
                 return $crud->route;
             }, // override http_referrer_url
             'order' => 1, // change the order save actions are in
@@ -553,17 +526,17 @@ class EffectCrudController extends CrudController
 
         $response = $this->traitStore();
         $effect = $this->crud->getCurrentEntry();
-    
+
         $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
         $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
         $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
 
         // do something after save
         return $response;
-
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $effect = Effect::find($id);
         $response = Gate::inspect('update', $effect);
         if ($response->allowed()) {
@@ -595,7 +568,7 @@ class EffectCrudController extends CrudController
         $indicators_repeat = json_decode($repeat);
 
         foreach ($indicators_repeat as  $index => $indicator) {
-            if(!empty($indicator->indicators)){
+            if (!empty($indicator->indicators)) {
                 $effect_indicator = LinkEffectIndicator::updateOrCreate(
                     [
                         'id'=> $indicator->effect_indicator_id,
@@ -609,7 +582,7 @@ class EffectCrudController extends CrudController
                     ]
                 );
                 $effect_indicator->save();
-            
+
 
                 $dis_name = "disaggregation_id[]";
 
@@ -636,20 +609,20 @@ class EffectCrudController extends CrudController
     {
         $beneficiaries_repeat = json_decode($repeat);
         $beneficiary_name = BeneficiaryType::get()->pluck('name')->toArray();
-        
+
         foreach ($beneficiaries_repeat as $beneficiary) {
-            if ( in_array($beneficiary->beneficiary_type_id, $beneficiary_name)) {
+            if (in_array($beneficiary->beneficiary_type_id, $beneficiary_name)) {
                 $is_other = false;
             } else {
                 $is_other = true;
             }
-          
+
             $beneficiary_type = BeneficiaryType::updateOrCreate(
                 ['name' => $beneficiary->beneficiary_type_id],
-                ['is_other' => $is_other] 
+                ['is_other' => $is_other]
             );
             $beneficiary_type_id = $beneficiary_type->id;
-         
+
             if (!empty($beneficiary->description)) {
                 $new_beneficiary  = Beneficiary::updateOrCreate(
                     [
