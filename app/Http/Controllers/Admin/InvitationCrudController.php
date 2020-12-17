@@ -117,7 +117,7 @@ class InvitationCrudController extends CrudController
         $user->save();
         $user->teams()->sync($request['teams']); 
         
-        Mail::to(backpack_user())->send(new InviteUser($user, $text_password));
+        Mail::to($invitation['email'])->send(new InviteUser($user, $text_password));
         // do something after save
         return $response;
 
