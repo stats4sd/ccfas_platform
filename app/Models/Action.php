@@ -22,6 +22,7 @@ class Action extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
+    protected $appends = ['output_id'];
 
     /*
     |--------------------------------------------------------------------------
@@ -29,11 +30,14 @@ class Action extends Model
     |--------------------------------------------------------------------------
     */
 
-    // public function getActivitiesAttribute()
-    // {
-        
-    //     return $this->activities()->name;
-    // }
+    public function getOutputIdAttribute()
+    {
+        if ($this->activities->count() > 0) {
+            return $this->activities()->first()->output_id;
+        }
+        return null;
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -74,7 +78,7 @@ class Action extends Model
     {
         return $this->belongsToMany(GeoBoundary::class, '_link_actions_geo_boundaries');
     }
-    
+
     public function activities()
     {
         return $this->belongsToMany(Activity::class, '_link_actions_activities');

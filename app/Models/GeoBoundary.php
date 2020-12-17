@@ -40,9 +40,9 @@ class GeoBoundary extends Model
         return $this->belongsToMany(Action::class, '_link_actions_geo_boundaries');
     }
 
-    public function country()
+    public function countries()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsToMany(Country::class, '_link_geo_boundaries_countries');
     }
 
     /*

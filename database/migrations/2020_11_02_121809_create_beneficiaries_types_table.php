@@ -16,6 +16,7 @@ class CreateBeneficiariesTypesTable extends Migration
         Schema::create('beneficiaries_types', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
+            $table->tinyInteger('is_other')->default(0);
             $table->timestamps();
         });
     }

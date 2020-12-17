@@ -2,26 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Team;
 use App\Models\Action;
+use App\Models\Change;
 use App\Models\Effect;
+use App\Models\Output;
+use App\Models\Activity;
 use App\Models\Evidence;
 use App\Models\Indicator;
+use App\Models\Milestone;
 use App\Models\Beneficiary;
+use App\Models\Subactivity;
+use App\Models\Disaggregation;
 use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
+
+use App\Models\IndicatorStatus;
 use App\Models\LevelAttribution;
+use Prologue\Alerts\Facades\Alert;
+use Spatie\Permission\Models\Role;
 use App\Models\LinkEffectIndicator;
 use App\Http\Requests\EffectRequest;
-use App\Models\Change;
-use App\Models\Disaggregation;
-use App\Models\IndicatorStatus;
-
-use function GuzzleHttp\json_decode;
-
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Redirect;
 
 /**
  * Class EffectCrudController
@@ -33,10 +39,11 @@ class EffectCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; edit as traitEdit; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
+    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -58,19 +65,90 @@ class EffectCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        $this->crud->addFilter(
-            [
-                'type'  => 'simple',
-                'name'  => 'team_id',
-                'label' => 'Team'
-            ],
-            false,
-            function () {
-                $teams = backpack_user()->teams;
+        $this->crud->addFilter([
+            'name'  => 'teams',
+            'type'  => 'select2_multiple',
+            'label' => 'Teams'
+        ], function () {
+            return Team::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
 
-                $this->crud->addClause('whereIn', 'team_id', $teams);
+            $this->crud->addClause('whereIn', 'team_id', json_decode($values));
+        });
+
+
+        $this->crud->addFilter([
+            'name'  => 'outputs',
+            'type'  => 'select2_multiple',
+            'label' => 'Ouputs'
+        ], function () {
+            return Output::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('activities', function ($q) use ($value) {
+                        $q->where('output_id', $value);
+                    });
+                });
             }
-        );
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'activities',
+            'type'  => 'select2_multiple',
+            'label' => 'Activities'
+        ], function () {
+            return Activity::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('activities', function ($q) use ($value) {
+                        $q->where('activity_id', $value);
+                    });
+                });
+            }
+        });
+
+
+        $this->crud->addFilter([
+            'name'  => 'subactivities',
+            'type'  => 'select2_multiple',
+            'label' => 'Subactivities'
+        ], function () {
+            return Subactivity::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('subactivities', function ($q) use ($value) {
+                        $q->where('subactivity_id', $value);
+                    });
+                });
+            }
+        });
+
+        $this->crud->addFilter([
+            'name'  => 'milestones',
+            'type'  => 'select2_multiple',
+            'label' => 'Milestones'
+        ], function () {
+            return Milestone::get()->pluck('name', 'id')->toArray();
+        }, function ($values) { // if the filter is active
+
+            foreach (json_decode($values) as $key => $value) {
+                $this->crud->query = $this->crud->query->whereHas('actions', function ($q) use ($value) {
+                    $q->whereHas('milestones', function ($q) use ($value) {
+                        $q->where('milestone_id', $value);
+                    });
+                });
+            }
+        });
+
+
+        if (!backpack_user()->is_admin) {
+            $this->crud->denyAccess('delete');
+        }
+
 
         $this->crud->addColumns([
             [
@@ -170,13 +248,13 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'value_qualitative',
                         'type'    => 'text',
-                        'label'   => 'I.2 If the indicator you have chosen is qualitative, please describe that changes captures the size of effect you are reporting. This is how the indicator “changed” from its original condition',
+                        'label'   => 'I.2 If the indicator you have chosen is QUALITATIVE, please describe the changes you are reporting. This is how the indicator “changed” from its original condition',
 
                     ],
                     [
                         'name'    => 'baseline_qualitative',
                         'type'   =>'text',
-                        'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status at baseline?<p></p>',
+                        'label' => 'I.2.1 If you have a baseline for this qualitative indicator, what was its status before the action took place?',
                     ],
                     [   // CustomHTML
                         'name'  => 'separator',
@@ -186,7 +264,7 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'value_quantitative',
                         'type'    => 'number',
-                       'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
+                        'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
                     ],
                     [
                         'name'    => 'baseline_quantitative',
@@ -357,41 +435,36 @@ class EffectCrudController extends CrudController
 
         $this->crud->addSaveAction([
             'name' => 'save_action_and_next',
-            'redirect' => function($crud, $request, $itemId) {
-                if($request->current_tab != 'action'){
-                  
+            'redirect' => function ($crud, $request, $itemId) {
+                if ($request->current_tab != 'action') {
                     $next_tabs = ['effect'=>'indicators', 'indicators'=>'evidence', 'evidence'=>'beneficiaries', 'beneficiaries'=>'action'];
                     return $crud->route."/".$itemId."/edit#".$next_tabs[$request->current_tab];
-                
-                }else{
-
-                    if(empty($request->actions)){
+                } else {
+                    if (empty($request->actions)) {
                         $new_action = Action::create([
                             'team_id' => $request->team_id,
-                            'description' => 'add a description',
+                            'description' => ' ',
                             'completed' => 0,
                             'start' => date("Y/m/d")
                         ]);
                         $new_action->save();
                         $effect = Effect::find($itemId);
-                        $effect->actions()->sync($new_action->id);    
-                        return 'ccafs/action/'. $new_action->id .'/edit';  
+                        $effect->actions()->sync($new_action->id);
+                        return 'ccafs/action/'. $new_action->id .'/edit';
                     }
-               
-                        return $crud->route;
+
+                    return $crud->route;
                 }
-             
             }, // what's the redirect URL, where the user will be taken after saving?
-        
+
             // OPTIONAL:
             'button_text' => 'Save and Next', // override text appearing on the button
             // You can also provide translatable texts, for example:
             // 'button_text' => trans('backpack::crud.save_action_one'),
-            'visible' => function($crud) {
+            'visible' => function ($crud) {
                 return true;
             }, // customize when this save action is visible for the current operation
-            'referrer_url' => function($crud, $request, $itemId) {
-               
+            'referrer_url' => function ($crud, $request, $itemId) {
                 return $crud->route;
             }, // override http_referrer_url
             'order' => 1, // change the order save actions are in
@@ -422,7 +495,7 @@ class EffectCrudController extends CrudController
 
     public function getBeneficieryTypes()
     {
-        return BeneficiaryType::get()->pluck('name', 'id');
+        return BeneficiaryType::where('is_other', 0)->get()->pluck('name', 'id');
     }
 
     public function getIndicators()
@@ -452,14 +525,26 @@ class EffectCrudController extends CrudController
 
         $response = $this->traitStore();
         $effect = $this->crud->getCurrentEntry();
-    
+
         $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
         $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
         $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
 
         // do something after save
         return $response;
+    }
 
+    public function edit($id)
+    {
+        $effect = Effect::find($id);
+        $response = Gate::inspect('update', $effect);
+        if ($response->allowed()) {
+            $response = $this->traitEdit($id);
+            return $response;
+        } else {
+            Alert::add('error', $response->message())->flash();
+            return Redirect::back();
+        }
     }
 
     public function update(EffectRequest $request)
@@ -482,7 +567,7 @@ class EffectCrudController extends CrudController
         $indicators_repeat = json_decode($repeat);
 
         foreach ($indicators_repeat as  $index => $indicator) {
-            if(!empty($indicator->indicators)){
+            if (!empty($indicator->indicators)) {
                 $effect_indicator = LinkEffectIndicator::updateOrCreate(
                     [
                         'id'=> $indicator->effect_indicator_id,
@@ -496,7 +581,7 @@ class EffectCrudController extends CrudController
                     ]
                 );
                 $effect_indicator->save();
-            
+
 
                 $dis_name = "disaggregation_id[]";
 
@@ -522,14 +607,21 @@ class EffectCrudController extends CrudController
     public function updateOrCreateBeneficiaries($repeat, $effect_id)
     {
         $beneficiaries_repeat = json_decode($repeat);
-        
+        $beneficiary_name = BeneficiaryType::get()->pluck('name')->toArray();
+
         foreach ($beneficiaries_repeat as $beneficiary) {
-          
+            if (in_array($beneficiary->beneficiary_type_id, $beneficiary_name)) {
+                $is_other = false;
+            } else {
+                $is_other = true;
+            }
+
             $beneficiary_type = BeneficiaryType::updateOrCreate(
-                ['name' => $beneficiary->beneficiary_type_id]
+                ['name' => $beneficiary->beneficiary_type_id],
+                ['is_other' => $is_other]
             );
             $beneficiary_type_id = $beneficiary_type->id;
-         
+
             if (!empty($beneficiary->description)) {
                 $new_beneficiary  = Beneficiary::updateOrCreate(
                     [

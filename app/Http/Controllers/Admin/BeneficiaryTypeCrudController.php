@@ -40,12 +40,20 @@ class BeneficiaryTypeCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setFromDb(); // columns
+        // CRUD::addColumn(['name' => 'name', 'type' => 'text']); 
+        // add a "simple" filter called Draft
+        $this->crud->addFilter([ 
+            'type'  => 'simple',
+            'name'  => 'is_other',
+            'label' => 'Show no other',
+           
+        ],
+        true, // the simple filter has no values, just the "Draft" label specified above
+        function() { // if the filter is active (the GET parameter "draft" exits)
+            $this->crud->addClause('where', 'is_other', '0'); 
+          
+        });
 
-        /**
-         * Columns can be defined using the fluent syntax or array syntax:
-         * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
-         */
     }
 
     /**
@@ -58,13 +66,21 @@ class BeneficiaryTypeCrudController extends CrudController
     {
         CRUD::setValidation(BeneficiaryTypeRequest::class);
 
-        CRUD::setFromDb(); // fields
+        $this->crud->addFields([
+           
+            [
+                'type' => "text",
+                'name' => 'name',
+                'label' => 'Name'
 
-        /**
-         * Fields can be defined using the fluent syntax or array syntax:
-         * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
-         */
+            ],
+            [
+                'type' => "hidden",
+                'name' => 'is_other',
+                'value' =>'0'
+            ],
+
+        ]);
     }
 
     /**
@@ -77,4 +93,6 @@ class BeneficiaryTypeCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+
+
 }

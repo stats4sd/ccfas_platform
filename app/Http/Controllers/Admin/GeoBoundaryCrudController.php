@@ -62,13 +62,13 @@ class GeoBoundaryCrudController extends CrudController
         CRUD::addFields([ 
             [  // Select
                 'label'     => "Country",
-                'type'      => 'select',
-                'name'      => 'country_id', 
-                'entity'    => 'country', 
-                'model'     => "App\Models\Country", 
-                'attribute' => 'name', 
+                'type'      => 'relationship',
+                'name'      => 'countries', 
+                'minimum_input_length' => 0,
+                'label' =>'Countries',
             ]
         ]);
+       
         CRUD::setFromDb(); // fields
 
     }

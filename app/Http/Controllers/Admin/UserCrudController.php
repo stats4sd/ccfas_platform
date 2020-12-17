@@ -49,8 +49,15 @@ class UserCrudController extends CrudController
             
             ]
         );
+        CRUD::addColumn(
+            [   
+                'label'     => "Is Admin",
+                'type'      => 'check',
+                'name'      => 'is_admin', 
+            
+            ]
+        );
         CRUD::column('created_at');
-        CRUD::column('updated_at');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -72,14 +79,22 @@ class UserCrudController extends CrudController
         CRUD::field('name');
         CRUD::field('email');
         CRUD::field('email_verified_at');
-        CRUD::field('password');
-        CRUD::field('remember_token');
+        // CRUD::field('password');
+        // CRUD::field('remember_token');
         CRUD::addField(
            
             [   
                 'label'     => "Teams",
                 'type'      => 'select2_multiple',
                 'name'      => 'teams', 
+            
+            ]
+        );
+        CRUD::addField(
+            [   
+                'label'     => "Is the user an admin?",
+                'type'      => 'checkbox',
+                'name'      => 'is_admin', 
             
             ]
         );

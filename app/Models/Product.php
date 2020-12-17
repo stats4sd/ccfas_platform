@@ -60,7 +60,7 @@ class Product extends Model
     */
     public function getNameDisplayAttribute()
     {
-        return $this->publication . ' ' . $this->distribution . ' ' . $this->publication_date;
+        return $this->publication . ' ' . $this->distribution . ' '. $this->info_hosted. ' ' . $this->publication_date;
     }
 
     
