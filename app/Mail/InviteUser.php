@@ -31,7 +31,7 @@ class InviteUser extends Mailable
      */
     public function build()
     {
-        return $this->from(env('ADMIN_EMAIL_ADDRESS'))
+        return $this->from(config('mail.admin_email'))
                 ->view('emails.invite_user')
                 ->with([
                     'name' => $this->invitation->name,
