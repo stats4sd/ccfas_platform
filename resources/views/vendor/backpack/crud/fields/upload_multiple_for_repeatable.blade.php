@@ -30,7 +30,7 @@
     			@if (isset($field['temporary']))
 		            <a target="_blank" href="{{ isset($field['disk'])?asset(\Storage::disk($field['disk'])->temporaryUrl($file_path, Carbon\Carbon::now()->addMinutes($field['temporary']))):asset($file_path) }}">{{ $file_path }}</a>
 		        @else
-		            <a target="_blank" href="{{ isset($field['disk'])?asset(\Storage::disk($field['disk'])->url($file_path)):asset($file_path) }}">{{ $file_path }}</a>
+		            <a target="_blank" href="{{ isset($field['disk'])?\Storage::disk($field['disk']->url($file_path)):asset($file_path) }}">{{ $file_path }}</a>
 		        @endif
             <a href="#" class="btn btn-light btn-sm float-right file-clear-button" title="Clear file" data-filename="{{ $file_path }}"><i class="la la-remove"></i></a>
 		    	<div class="clearfix"></div>
@@ -51,7 +51,7 @@
 	        @include('crud::fields.inc.attributes', ['default_class' =>  isset($field['value']) && $field['value']!=null?'file_input backstrap-file-input':'file_input backstrap-file-input'])
 	        multiple
 	    >
-        <label class="backstrap-file-label" for="customFile"></label>
+        <label class="backstrap-file-label d-block" for="customFile"></label>
     </div>
 
     {{-- HINT --}}
@@ -88,7 +88,7 @@
                         var repeatIndex = $(fileHidden).data('index')
 
                         filePreview.append(`<div class="file-preview border border-light">
-                            <a target="_blank" href="{{ url('') }}/${path}">${filename}</a>
+                            <a target="_blank" href="{{ \Storage::disk($field['disk'])->url("") }}/${path}">${filename}</a>
                             <a href="#" class="btn btn-light btn-sm float-right file-clear-button" title="Clear file" data-filename="${path}" data-index="${repeatIndex}"><i class="la la-remove"></i></a>
                             <div class="clearfix"></div>
                         </div>`)

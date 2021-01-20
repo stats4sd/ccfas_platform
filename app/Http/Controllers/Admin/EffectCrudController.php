@@ -352,7 +352,7 @@ class EffectCrudController extends CrudController
                         'label'     => 'E.3 Evidence Files',
                         'type'      => 'upload_multiple_for_repeatable',
                         'upload'    => true,
-                        'disk'      => 'uploads', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
+                        'disk'      => 'public', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
                     ],
                     [
                         'name'    => 'urls',

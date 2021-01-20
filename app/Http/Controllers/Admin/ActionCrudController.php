@@ -320,19 +320,13 @@ class ActionCrudController extends CrudController
 
             ],
             [
-                'type' => "select2_from_ajax_multiple",
+                'type' => "relationship",
                 'name' => 'activities',
                 'placeholder' => "Select an Activity",
                 'label' => 'Select the Activity under which this action falls ',
                 'minimum_input_length' => 0,
-                'multiple' => false,
+                'multiple' => true,
                 'dependecies' => ['output_id'],
-                'entity'      => 'activities', // the method that defines the relationship in your Model
-                'attribute'   => "name", // foreign key attribute that is shown to user
-                'data_source' => backpack_url('action/fetch/activity'), // url to controller search function (with /{id} should return model)
-                'method' => 'post',
-                'include_all_form_fields' => true,
-                'pivot' => true,
                 'tab' => 'Log Framework'
             ],
             [
