@@ -148,6 +148,7 @@ class EffectCrudController extends CrudController
         if (!backpack_user()->is_admin) {
             $this->crud->denyAccess('delete');
         }
+        $this->crud->removeButton('show');
 
 
         $this->crud->addColumns([
@@ -226,8 +227,7 @@ class EffectCrudController extends CrudController
                         'name'  => 'indicator_label',
                         'type'  => 'custom_html',
                         'value' => '<h6><b>Indicator definition</b></h6><p>Please provide a full definition and if available a reference to a standard definition for this indicator.
-                         This should include how the indicator is calculated and how the data is obtained.</p>
-                         <p><b>We could break this down into more specific questions, but I am not sure if this would not impose a burden that is to high on the respondents</b></p>'
+                        This should include how the indicator is calculated and how the data is obtained.</p>'
                     ],
                     [
                         'name' => 'ind_value_id',
@@ -285,6 +285,7 @@ class EffectCrudController extends CrudController
                     [   // Upload
                         'name'      => 'file_source',
                         'label'     => 'I.4.2 If you have a document that supports this indicator us evidence, you can upload it here.',
+                        'hint'      => 'If your want to open a file that has already been uploaded, right click on the link and select "Open in a new tab"',
                         'type'      => 'upload_multiple_for_repeatable',
                         'upload'    => true,
                         'disk'      => 'public',
@@ -353,6 +354,7 @@ class EffectCrudController extends CrudController
                         'type'      => 'upload_multiple_for_repeatable',
                         'upload'    => true,
                         'disk'      => 'public', // if you store files in the /public folder, please ommit this; if you store them in /storage or S3, please specify it;
+                        'hint'      => 'If your want to open a file that has already been uploaded, right click on the link and select "Open in a new tab"',
                     ],
                     [
                         'name'    => 'urls',

@@ -139,7 +139,7 @@ class ActionCrudController extends CrudController
         if (!backpack_user()->is_admin) {
             $this->crud->denyAccess('delete');
         }
-
+        $this->crud->removeButton('show');
 
         $this->crud->addColumns([
             [
