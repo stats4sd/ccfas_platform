@@ -99,13 +99,14 @@
             container.find('.well').each(function () {
                 $(this).find('input, select, textarea').each(function () {
                     if ($(this).data('repeatable-input-name')) {
+                        console.log($(this).data('repeatable-input-name'));
                         obj[$(this).data('repeatable-input-name')] = $(this).val();
                     }
                 });
                 arr.push(obj);
                 obj = {};
             });
-
+            console.log('Array', arr);
             return arr;
         }
 
@@ -168,10 +169,12 @@
             if (element.closest('.modal-content').length) {
                 element.closest('.modal-content').find('.save-block').click(function(){
                     element.val(JSON.stringify(repeatableInputToObj(field_name)));
+                    
                 })
             } else if (element.closest('form').length) {
                 element.closest('form').submit(function(){
                     element.val(JSON.stringify(repeatableInputToObj(field_name)));
+                  
                     return true;
                 })
             }

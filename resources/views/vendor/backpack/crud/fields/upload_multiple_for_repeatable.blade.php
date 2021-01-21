@@ -24,7 +24,7 @@
 		}
 	@endphp
 	@if (count($values))
-    <div class="well well-sm existing-file">
+    <div class="existing-file">
     	@foreach($values as $key => $file_path)
     		<div class="file-preview">
     			@if (isset($field['temporary']))
@@ -39,7 +39,7 @@
     </div>
     @endif
     @else
-    <div class="well well-sm existing-file"></div>
+    <div class="existing-file"></div>
     @endif
 	{{-- Show the file picker on CREATE form. --}}
 	<input name="{{ $field['name'] }}[]" type="hidden" data-for-type="file">

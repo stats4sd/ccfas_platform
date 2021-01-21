@@ -73,14 +73,17 @@ class Effect extends Model
 
     public function getEvidencesRepeatAttribute()
     {
-        return $this->evidences->map(function ($evid, $key) {
+       
+        return( $this->evidences->map(function ($evid, $key) {
+       
             return [
-                'id'=>$evid['id'],
+                'id_evidence'=>$evid['id'],
                 'description'=>$evid['description'],
                 'files_description'=>$evid['files_description'],
                 'evidence_files'=>$evid['files'],
                 'urls'=>$evid['urls']];
-        });
+        }));
+
     }
 
     /*

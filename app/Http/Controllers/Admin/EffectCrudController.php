@@ -331,7 +331,7 @@ class EffectCrudController extends CrudController
                 'value'=>null,
                 'fields' => [
                     [
-                        'name' => 'id',
+                        'name' => 'id_evidence',
                         'type' => "hidden",
                         'value' => null
 
@@ -525,7 +525,6 @@ class EffectCrudController extends CrudController
 
         $response = $this->traitStore();
         $effect = $this->crud->getCurrentEntry();
-
         $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
         $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
         $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
@@ -553,7 +552,7 @@ class EffectCrudController extends CrudController
 
         $response = $this->traitUpdate();
         $effect = $this->crud->getCurrentEntry();
-
+     
         $this->updateOrCreateIndicators($request->indicator_repeat, $effect->id);
         $this->updateOrCreateEvidences($request->evidences_repeat, $effect->id);
         $this->updateOrCreateBeneficiaries($request->beneficiaries_repeat, $effect->id);
@@ -642,25 +641,31 @@ class EffectCrudController extends CrudController
     public function updateOrCreateEvidences($repeat, $effect_id)
     {
         $evidence_repeat = json_decode($repeat);
-
+        
         foreach ($evidence_repeat as $index => $evidence) {
-            //problem with file
-            if (!empty($evidence->description)) {
+             $evidence = (array)$evidence;
+      
+            if (count($evidence)) {
+               
                 $new_evidence  = Evidence::updateOrCreate(
                     [
-                        'id' => $evidence->id
+                        'id' => $evidence['id_evidence']
                     ],
                     [
                         'effect_id' =>  $effect_id,
-                        'description' => $evidence->description,
+                        'description' => $evidence['description'],
                         'files' => 'evidence_files_'.$index,
-                        'urls' => $evidence->urls,
-                        'files_description' => $evidence->files_description
+                        'urls' => $evidence['urls'],
+                        'files_description' => $evidence['files_description']
                     ]
                 );
-
+           
+              
                 $new_evidence->save();
             }
+
         }
+
+        
     }
 }

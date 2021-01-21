@@ -34,7 +34,7 @@ trait HasUploadFields
         $destination_path .= "/".time();
 
         $request = Request::instance();
-
+   
         // if a new file is uploaded, delete the file from the disk
         if ($request->hasFile($attribute_name) &&
             $this->{$attribute_name} &&
@@ -81,6 +81,7 @@ trait HasUploadFields
      */
     public function uploadMultipleFilesToDiskFromRepeatable($value, $attribute_name, $disk, $destination_path)
     {
+       
         $destination_path .= "/".time();
 
         $request = Request::instance();
@@ -112,6 +113,7 @@ trait HasUploadFields
                     $file_path = $file->storeAs($destination_path, $file->getClientOriginalName(), $disk);
 
                     // 2. Add the public path to the database
+                    
                     $attribute_value[] = $file_path;
                 }
             }
