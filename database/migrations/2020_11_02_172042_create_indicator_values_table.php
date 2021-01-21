@@ -19,7 +19,7 @@ class CreateIndicatorValuesTable extends Migration
             $table->decimal('value_quantitative')->nullable();
             $table->string('value_qualitative')->nullable();
             $table->string('url_source')->nullable();
-            $table->string('file_source')->nullable();
+            $table->json('file_source')->nullable();
             $table->foreignId('indicator_status_id')->nullable();
             $table->json('disaggregation_id')->nullable();
             $table->timestamps();
