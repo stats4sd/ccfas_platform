@@ -47,13 +47,14 @@ class Effect extends Model
         
         foreach ($effects_indicators as $effect_indicator) {
             $indicator_values = IndicatorValue::where('link_effect_indicator_id', '=', $effect_indicator['effect_indicator_id'])->get();
-
             foreach ($indicator_values as $indi_value) {
+                $disaggretion = Disaggregation::find($indi_value['disaggregation_id'])->pluck('name');
+
                 $effect_indicator['ind_value_id'] = $indi_value['id'];
                 $effect_indicator['value_quantitative'] = $indi_value['value_quantitative'];
                 $effect_indicator['value_qualitative'] = $indi_value['value_qualitative'];
                 $effect_indicator['ind_url_source'] = $indi_value['url_source'];
-                $effect_indicator['disaggregation_id[]'] = $indi_value['disaggregation_id'];
+                $effect_indicator['disaggregation_id'] = $disaggretion;
                 $effect_indicator['file_source'] = $indi_value['file_source'];
             }
             $indicators_edit[]= $effect_indicator;

@@ -300,13 +300,11 @@ class EffectCrudController extends CrudController
                     ],
                     [
                         'name'    => 'disaggregation_id',
-                        'type' => "select2_from_array",
+                        'type' => "free_text",
                         'label' => 'I.6 If you can disaggregate this indicator, please indicate the criteria it can be disaggregated by',
-
+                        'hint' => 'If do you have more that one disaggregate, use the comma "," to separate them',
                         // optional - force the related options to be a custom query, instead of all();
                         'options'   => $this->getDisaggregations(),
-                        'allows_multiple' => true,
-                        'allows_null' => true,
                     ]
 
 
@@ -517,7 +515,7 @@ class EffectCrudController extends CrudController
 
     public function getDisaggregations()
     {
-        return Disaggregation::get()->pluck('name', 'id');
+        return Disaggregation::where('is_other', 0)->get()->pluck('name', 'id');
     }
 
     public function store(EffectRequest $request)
@@ -583,8 +581,31 @@ class EffectCrudController extends CrudController
                 );
                 $effect_indicator->save();
 
+                $disaggregation_name = Disaggregation::get()->pluck('name')->toArray();
 
-                $dis_name = "disaggregation_id[]";
+                foreach ($indicators_repeat as $indicator) {
+                    $disaggregations = explode(',', $indicator->disaggregation_id);
+                    $disaggregation_id = [];
+                    foreach($disaggregations as $disag){
+                        $disag = trim($disag);
+                        if (in_array($disag, $disaggregation_name)) {
+                            $dis = Disaggregation::where('name',$disag)->first();
+                         
+                            $is_other = $dis['is_other'];
+                            
+                        } else {
+                           
+                            $is_other = true;
+                        }
+                        $disaggregation = Disaggregation::updateOrCreate(
+                            ['name' => $disag],
+                            ['is_other' => $is_other]
+                        );
+                        $disaggregation_id[] = $disaggregation->id;
+                    }
+        
+                }
+              
 
                 $indicator_value = IndicatorValue::updateOrCreate(
                     [
@@ -596,7 +617,7 @@ class EffectCrudController extends CrudController
                         'value_quantitative' => $indicator->value_quantitative,
                         'url_source' => $indicator->ind_url_source,
                         'file_source' => 'file_source_'.$index,
-                        'disaggregation_id'=> $indicator->$dis_name
+                        'disaggregation_id'=> $disaggregation_id
                     ]
                 );
 
@@ -612,7 +633,8 @@ class EffectCrudController extends CrudController
 
         foreach ($beneficiaries_repeat as $beneficiary) {
             if (in_array($beneficiary->beneficiary_type_id, $beneficiary_name)) {
-                $is_other = false;
+                $benef = BeneficiaryType::where('name',$beneficiary->beneficiary_type_id)->first();
+                $is_other = $benef['is_other'];
             } else {
                 $is_other = true;
             }
