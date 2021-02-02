@@ -28,7 +28,7 @@ class LevelAttributionCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\LevelAttribution::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/levelattribution');
-        CRUD::setEntityNameStrings('levelattribution', 'level_attributions');
+        CRUD::setEntityNameStrings('levelattribution', 'level attributions');
     }
 
     /**

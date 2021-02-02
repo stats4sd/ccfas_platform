@@ -17,7 +17,6 @@ Route::group([
     Route::crud('effect', 'EffectCrudController');
     Route::crud('action', 'ActionCrudController');
     Route::crud('indicator', 'IndicatorCrudController');
-    Route::crud('indicatorstatus', 'IndicatorStatusCrudController');
     Route::crud('indicatorvalue', 'IndicatorValueCrudController');
     Route::crud('team', 'TeamCrudController');
     Route::crud('user', 'UserCrudController');
@@ -45,7 +44,6 @@ Route::group([
     Route::crud('levelattribution', 'LevelAttributionCrudController');
     Route::crud('linkeffectindicator', 'LinkEffectIndicatorCrudController');
     Route::crud('disaggregation', 'DisaggregationCrudController');
-    Route::crud('change', 'ChangeCrudController');
     Route::crud('milestone', 'MilestoneCrudController');
     Route::crud('invitation', 'InvitationCrudController');
 
