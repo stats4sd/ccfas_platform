@@ -28,7 +28,7 @@ class BeneficiaryTypeCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\BeneficiaryType::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/beneficiarytype');
-        CRUD::setEntityNameStrings('beneficiarytype', 'beneficiary_types');
+        CRUD::setEntityNameStrings('beneficiarytype', 'beneficiary types');
     }
 
     /**

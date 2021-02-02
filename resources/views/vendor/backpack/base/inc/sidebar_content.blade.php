@@ -40,14 +40,12 @@
     <a class='nav-link nav-dropdown-toggle' href="#"><i class="fas fa-tachometer-alt"></i> Indicators Fields</a>
     <ul class="nav-dropdown-items">
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicator') }}'><i class=''></i> Indicators</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicatorvalue') }}'><i class=''></i> IndicatorValues</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicatorstatus') }}'><i class=''></i> IndicatorStatuses</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('levelattribution') }}'><i class=''></i> LevelAttributions</a></li>
+        <!-- <li class='nav-item'><a class='nav-link' href='{{ backpack_url('indicatorvalue') }}'><i class=''></i> IndicatorValues</a></li> -->
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('levelattribution') }}'><i class=''></i> Level of Attributions</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('disaggregation') }}'><i class=''></i> Disaggregations</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('change') }}'><i class=''></i> Changes</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('evidence') }}'><i class=''></i> Evidence</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('beneficiary') }}'><i class=''></i> Beneficiaries</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('beneficiarytype') }}'><i class=''></i> BeneficiaryTypes</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('beneficiarytype') }}'><i class=''></i> Beneficiary Types</a></li>
 
  </ul>
 </li>
@@ -60,7 +58,7 @@
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('ipflow') }}'><i class=''></i> Ipflows</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('scope') }}'><i class=''></i> Scopes</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('geoboundary') }}'><i class=''></i> GeoBoundaries</a></li>
-        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('producttype?is_other=true') }}'><i class=''></i> ProductTypes</a></li>
+        <li class='nav-item'><a class='nav-link' href='{{ backpack_url('producttype?is_other=true') }}'><i class=''></i> Product Types</a></li>
         <li class='nav-item'><a class='nav-link' href='{{ backpack_url('country') }}'><i class=''></i> Countries</a></li>
     </ul>
 </li>
