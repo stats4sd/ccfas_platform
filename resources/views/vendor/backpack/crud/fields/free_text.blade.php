@@ -3,19 +3,17 @@
 
     <label>{!! $field['label'] !!}</label>
     <input
-        list="options"
+        type="text"
         name="{{ $field['name'] }}"
-    
-
-        selectBoxOptions= "{{ $field['options'] }}"
         @include('crud::fields.inc.attributes')
+        list="{{ $field['name'] }}"
+        multiple
     >
-    <datalist id="options">
+    <datalist id="{{ $field['name'] }}">
     @foreach ($field['options'] as $key => $value)
-        <option value="{{ $value }}"></option>
+        <option value="{{ $value }}"/>
     @endforeach
- 
-</datalist>
+    </datalist>
 
     {{-- HINT --}}
     @if (isset($field['hint']))
@@ -31,11 +29,12 @@
     {{-- FIELD EXTRA CSS  --}}
     {{-- push things in the after_styles section --}}
     @push('crud_fields_styles')
-        <!-- no styles -->
+    
     @endpush
 
     {{-- FIELD EXTRA JS --}}
     {{-- push things in the after_scripts section --}}
+ 
     @push('crud_fields_scripts')
         <!-- no scripts -->
     @endpush

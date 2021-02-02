@@ -39,6 +39,7 @@ class UserCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        $this->crud->removeButton('create');
         CRUD::column('name');
         CRUD::column('email');
         CRUD::addColumn(
@@ -78,8 +79,8 @@ class UserCrudController extends CrudController
 
         CRUD::field('name');
         CRUD::field('email');
-        CRUD::field('email_verified_at');
-        // CRUD::field('password');
+        // CRUD::field('email_verified_at');
+        CRUD::field('password');
         // CRUD::field('remember_token');
         CRUD::addField(
            
