@@ -234,6 +234,7 @@ class EffectCrudController extends CrudController
                         'type' => "hidden",
                         'value' => null
 
+                        
                     ],
                     [
                         'type' => "relationship",
@@ -506,11 +507,6 @@ class EffectCrudController extends CrudController
     public function getLevelAttributions()
     {
         return LevelAttribution::get()->pluck('name', 'id');
-    }
-
-    public function getIndicatorStatus()
-    {
-        return IndicatorStatus::get()->pluck('name', 'id');
     }
 
     public function getDisaggregations()
