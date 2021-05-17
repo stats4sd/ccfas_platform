@@ -234,6 +234,7 @@ class EffectCrudController extends CrudController
                         'type' => "hidden",
                         'value' => null
 
+                        
                     ],
                     [
                         'type' => "relationship",
@@ -264,12 +265,14 @@ class EffectCrudController extends CrudController
                     [
                         'name'    => 'value_quantitative',
                         'type'    => 'number',
-                        'label'   => 'I.3 If the indicator you have chosen is quantitative, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
+                        'label'   => 'I.3 If the indicator you have chosen is QUANTITATIVE, please indicate the size of the effect in numbers in the box below. This is how much has the indicator “changed” from its original value',
+                        'attributes' => ["step" => "any"]
                     ],
                     [
                         'name'    => 'baseline_quantitative',
                         'type'   =>'number',
                         'label' => 'I.3.1 If you have a baseline for this indicator, what was its value at baseline? What is the value of the indicator now?',
+                        'attributes' => ["step" => "any"]
                     ],
                     [
                         'name' => 'effect_indicator_id',
@@ -506,11 +509,6 @@ class EffectCrudController extends CrudController
     public function getLevelAttributions()
     {
         return LevelAttribution::get()->pluck('name', 'id');
-    }
-
-    public function getIndicatorStatus()
-    {
-        return IndicatorStatus::get()->pluck('name', 'id');
     }
 
     public function getDisaggregations()
