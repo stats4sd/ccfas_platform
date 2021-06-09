@@ -581,18 +581,19 @@ class EffectCrudController extends CrudController
 
                 $disaggregation_name = Disaggregation::get()->pluck('name')->toArray();
 
-                foreach ($indicators_repeat as $indicator) {
-                    $disaggregations = explode(',', $indicator->disaggregation_id);
+                foreach ($indicators_repeat as $disaggregation) {
+                  
+                    $disaggregations = explode(',', $disaggregation->disaggregation_id);
                     $disaggregation_id = [];
                     foreach($disaggregations as $disag){
                         $disag = trim($disag);
                         if (in_array($disag, $disaggregation_name)) {
                             $dis = Disaggregation::where('name',$disag)->first();
-                         
+                            
                             $is_other = $dis['is_other'];
                             
                         } else {
-                           
+                            
                             $is_other = true;
                         }
                         $disaggregation = Disaggregation::updateOrCreate(
@@ -601,10 +602,9 @@ class EffectCrudController extends CrudController
                         );
                         $disaggregation_id[] = $disaggregation->id;
                     }
-        
+                    
+                    
                 }
-              
-
                 $indicator_value = IndicatorValue::updateOrCreate(
                     [
                         'id'=> $indicator->ind_value_id,
@@ -616,10 +616,14 @@ class EffectCrudController extends CrudController
                         'url_source' => $indicator->ind_url_source,
                         'file_source' => 'file_source_'.$index,
                         'disaggregation_id'=> $disaggregation_id
-                    ]
-                );
-
+                        ]
+                    );
+                    
+                  
                 $indicator_value->save();
+                
+                
+
             }
         }
     }
