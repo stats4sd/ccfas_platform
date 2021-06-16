@@ -23,7 +23,7 @@ class IndicatorValue extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
-    protected $casts = ['disaggregation_id' => 'array', 'file_source' => 'array' ];
+    protected $casts = ['disaggregation_id' => 'array', 'file_source' => 'array', 'disaggreation_names'=>'array' ];
 
     /*
     |--------------------------------------------------------------------------
@@ -39,6 +39,16 @@ class IndicatorValue extends Model
     public function indicator_status()
     {
         return $this->hasMany('App\Models\IndicatorStatus', 'indicator_status_id');
+    }
+
+    public function linkEffectIndicator()
+    {
+        return $this->belongsTo(LinkEffectIndicator::class);
+    }
+
+    public function disaggregation()
+    {
+        return $this->belongsTo(Disaggregation::class);
     }
 
     /*
@@ -79,4 +89,10 @@ class IndicatorValue extends Model
 
         $this->uploadMultipleFilesToDiskFromRepeatable($value, $attribute_name, $disk, $destination_path);
     }
+
+    public function getDisaggregationNamesAttribuite()
+    {
+        
+        return $this->disaggregation->pluck('disaggregation_id');
+    } 
 }

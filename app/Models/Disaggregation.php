@@ -34,6 +34,10 @@ class Disaggregation extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function indicatorValues()
+    {
+        return $this->hasMany(IndicatorValue::class);
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -19,4 +19,3 @@ Route::get('/', function () {
 
 Route::get('ccafs/register', 'App\Http\Controllers\Admin\Auth\RegisterController@showRegistrationForm')->name('backpack.auth.register');
 Route::post('ccafs/register', 'App\Http\Controllers\Admin\Auth\RegisterController@register');
-
