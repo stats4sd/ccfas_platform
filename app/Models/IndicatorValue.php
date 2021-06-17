@@ -41,6 +41,16 @@ class IndicatorValue extends Model
         return $this->hasMany('App\Models\IndicatorStatus', 'indicator_status_id');
     }
 
+    public function linkEffectIndicator()
+    {
+        return $this->belongsTo(LinkEffectIndicator::class);
+    }
+
+    public function disaggregation()
+    {
+        return $this->belongsTo(Disaggregation::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

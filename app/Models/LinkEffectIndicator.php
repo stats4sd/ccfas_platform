@@ -39,6 +39,23 @@ class LinkEffectIndicator extends Model
         return $this->belongsTo(Effect::class);
     }
 
+    public function indicator()
+    {
+        return $this->belongsTo(Indicator::class);
+    }
+
+    public function indicatorValues()
+    {
+        return $this->hasMany(IndicatorValue::class);
+    }
+
+    public function levelAttribution()
+    {
+        return $this->belongsTo(LevelAttribution::class);
+    }
+
+
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

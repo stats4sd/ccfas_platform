@@ -22,6 +22,8 @@ class GeoBoundary extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
+    protected $appends = ['country_ids', 'country_names'];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -56,6 +58,37 @@ class GeoBoundary extends Model
     | ACCESSORS
     |--------------------------------------------------------------------------
     */
+    public function getCountryIdsAttribute()
+    {
+        if ($this->countries()->count() > 0) {
+            $country_ids='';
+            $countries = $this->countries()->get();
+            foreach($countries as $country){
+                if($this->countries()->count()==1){
+                    return $country->id;
+                }
+                $country_ids = $country->id .', '.$country_ids;
+            }
+           return $country_ids;
+        }
+        return 'null';
+    }
+
+    public function getCountryNamesAttribute()
+    {
+        if ($this->countries()->count() > 0) {
+            $country_names='';
+            $countries = $this->countries()->get();
+            foreach($countries as $country){
+                if($this->countries()->count()==1){
+                    return $country->name;
+                }
+                $country_names = $country->name.', '.$country_names;
+            }
+           return $country_names;
+        }
+        return 'null';
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -13,11 +13,13 @@ use App\Models\Indicator;
 use App\Models\Milestone;
 use App\Models\Beneficiary;
 use App\Models\Subactivity;
+use App\Exports\CcfasExport;
+use App\Exports\EffectsExport;
 use App\Models\Disaggregation;
 use App\Models\IndicatorValue;
 use App\Models\BeneficiaryType;
-
 use App\Models\IndicatorStatus;
+
 use App\Models\LevelAttribution;
 use Prologue\Alerts\Facades\Alert;
 use Spatie\Permission\Models\Role;
@@ -25,7 +27,10 @@ use App\Models\LinkEffectIndicator;
 use App\Http\Requests\EffectRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\IndicatorValuesExport;
 use Illuminate\Support\Facades\Redirect;
+use \App\Http\Controllers\Operations\ExportOperation;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -44,6 +49,7 @@ class EffectCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
     use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+    use ExportOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -55,6 +61,9 @@ class EffectCrudController extends CrudController
         CRUD::setModel(\App\Models\Effect::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/effect');
         CRUD::setEntityNameStrings('effect', 'effects');
+
+        // CRUD::set('export.exporter', EffectsExport::class);
+        CRUD::set('export.exporter', CcfasExport::class);
     }
 
     /**
@@ -694,4 +703,5 @@ class EffectCrudController extends CrudController
 
         
     }
+
 }

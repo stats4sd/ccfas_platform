@@ -51,4 +51,5 @@ Route::group([
     Route::get('edit-account-info', 'MyAccountController@getAccountInfoForm')->name('backpack.account.info');
     Route::post('edit-account-info', 'MyAccountController@postAccountInfoForm')->name('backpack.account.info.store');
     Route::post('change-password', 'MyAccountController@postChangePasswordForm')->name('backpack.account.password');
+
 }); // this should be the absolute last line of this file
