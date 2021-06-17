@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\LinkActionProduct;
 use App\Models\Product;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -17,7 +18,7 @@ class ProductsExport implements FromCollection, WithTitle, WithHeadings, WithMap
     */
     public function collection()
     {
-        return Product::all();
+        return LinkActionProduct::all();
     }
 
     /**
@@ -30,20 +31,20 @@ class ProductsExport implements FromCollection, WithTitle, WithHeadings, WithMap
 
     public function map($value) : array
     {
-        foreach($value->actions as $action)
-        {
+        $product = Product::findOrFail($value->product_id);
+       
             return [
-                $action->id,
-                $value->id,
-                $value->product_type_id,
-                $value->product_type->name,
-                $value->audience,
-                $value->audience_size,
-                $value->publication,
-                $value->distribution,
+                $value->action_id,
+                $value->product_id,
+                $product->product_type_id,
+                $product->product_type->name,
+                $product->audience,
+                $product->audience_size,
+                $product->publication,
+                $product->distribution,
             ];
-        }
-        return [];
+        
+     
     }
 
     public function headings(): array

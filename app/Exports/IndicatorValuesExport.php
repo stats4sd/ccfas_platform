@@ -30,7 +30,9 @@ class IndicatorValuesExport implements FromCollection, WithTitle, WithHeadings, 
 
     public function map($value) : array
     {
+       
         return [
+            $value->id,
             $value->linkEffectIndicator->effect_id,
             $value->linkEffectIndicator->indicator_id,
             $value->linkEffectIndicator->indicator->name,
@@ -41,13 +43,14 @@ class IndicatorValuesExport implements FromCollection, WithTitle, WithHeadings, 
             $value->url_source,
             $value->file_source,
             $value->linkEffectIndicator->levelAttribution->name,
-            $value->DisaggregationNames,
+            $value->disaggregation_id,
         ];
     }
 
     public function headings(): array
     {
         return [
+            'id',
             'effect_id',
             'indicator_id',
             'indicator_name',
@@ -58,7 +61,7 @@ class IndicatorValuesExport implements FromCollection, WithTitle, WithHeadings, 
             'url_source',
             'file_source',
             'level_attribution_name',
-            'disaggregations'
+            'disaggregation_id'
         ];
     }
 }

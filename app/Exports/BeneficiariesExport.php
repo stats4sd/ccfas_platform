@@ -32,6 +32,7 @@ class BeneficiariesExport implements FromCollection, WithTitle, WithHeadings, Wi
     {
         return [
             $value->effect_id,
+            $value->id,
             $value->beneficiaries_types->id,
             $value->beneficiaries_types->name,
             $value->description,
@@ -42,6 +43,7 @@ class BeneficiariesExport implements FromCollection, WithTitle, WithHeadings, Wi
     {
         return [
             'effect_id',
+            'id',
             'type_id',
             'type_name',
             'description',

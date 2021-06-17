@@ -2,52 +2,46 @@
 
 namespace App\Exports;
 
-use App\Models\Evidence;
+use App\Models\Activity;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 
-
-class EvidencesExport implements FromCollection, WithTitle, WithHeadings, WithMapping
+class ActivitiesExport implements FromCollection,  WithTitle, WithHeadings, WithMapping
 {
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        return Evidence::all();
+        return Activity::all();
     }
-    
+
      /**
      * @return string
      */
     public function title(): string
     {
-        return 'Evidences';
+        return 'Activities';
     }
 
     public function map($value) : array
     {
         return [
-            $value->effect_id,
             $value->id,
-            $value->description,
-            $value->files_description,
-            $value->urls,
+            $value->output_id,
+            $value->name,
+           
         ];
     }
 
     public function headings(): array
     {
         return [
-            'effect_id',
             'id',
-            'description',
-            'files_description',
-            'url',
+            'output_id',
+            'name'
         ];
     }
 }

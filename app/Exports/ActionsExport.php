@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Action;
+use App\Models\LinkEffectAction;
 use CreateLinkEffectsActionsTable;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -18,12 +19,8 @@ class ActionsExport implements FromCollection, WithTitle, WithHeadings, WithMapp
     */
     public function collection()
     {
-        $query = Action::with(['effects'])->get();
-        // dd($query);
-        
-        return Action::with(['effects'])->get();
+        return LinkEffectAction::all();
     }
-
      /**
      * @return string
      */
@@ -34,61 +31,59 @@ class ActionsExport implements FromCollection, WithTitle, WithHeadings, WithMapp
 
     public function map($value) : array
     {
-
-        foreach($value->effects as $effect)
-        {
+        $action = Action::findOrFail($value->action_id);
+      
             return [
-                $effect->id,
-                $value->id,
-                $value->description,
-                $value->start,
-                $value->end,
-                $value->geo_boundary_id,
-                $value->subactivities_numbers,
-                $value->activities_numbers,
-                $value->outputs_numbers,
-                $value->milestones_numbers,
-                $value->pillar_sustainability,
-                $value->pillar_adpating,
-                $value->pillar_reducing,
-                $value->system_value_chains,
-                $value->system_landscape_management,
-                $value->practices_energy_management,
-                $value->capture_fisheries,
-                $value->forestry_agroforestry,
-                $value->livestock_management,
-                $value->water_management,
-                $value->crop_production,
-                $value->soil_management,
-                $value->services_for_farmers,
-                $value->ecosystem,
-                $value->management_of_farms,
-                $value->exploiting_opportunities,
-                $value->understanding_and_planning,
-                $value->managing_climate_risks,
-                $value->enhancing_financing,
-                $value->strengthening_national,
-                $value->building_policy_frameworks,
-                $value->expanding_evidence,
-                $value->gender,
-                $value->institutional_arrangements,
-                $value->policy_engagement,
-                $value->infrastructure,
-                $value->climate_information_services,
-                $value->index_based_insurance,
+                $value->effect_id,
+                $value->action_id,
+                $action->description,
+                $action->start,
+                $action->end,
+                $action->geo_boundary_id,
+                $action->subactivities_numbers,
+                $action->activities_numbers,
+                $action->outputs_numbers,
+                $action->milestones_numbers,
+                $action->pillar_sustainability,
+                $action->pillar_adpating,
+                $action->pillar_reducing,
+                $action->system_action_chains,
+                $action->system_landscape_management,
+                $action->practices_energy_management,
+                $action->capture_fisheries,
+                $action->forestry_agroforestry,
+                $action->livestock_management,
+                $action->water_management,
+                $action->crop_production,
+                $action->soil_management,
+                $action->services_for_farmers,
+                $action->ecosystem,
+                $action->management_of_farms,
+                $action->exploiting_opportunities,
+                $action->understanding_and_planning,
+                $action->managing_climate_risks,
+                $action->enhancing_financing,
+                $action->strengthening_national,
+                $action->building_policy_frameworks,
+                $action->expanding_evidence,
+                $action->gender,
+                $action->institutional_arrangements,
+                $action->policy_engagement,
+                $action->infrastructure,
+                $action->climate_information_services,
+                $action->index_based_insurance,
 
-                $value->scope_localised,
-                $value->scope_local_plus,
-                $value->country_wide,
-                $value->multi_country,
-                $value->global,
+                $action->scope_localised,
+                $action->scope_local_plus,
+                $action->country_wide,
+                $action->multi_country,
+                $action->global,
 
-                $value->basic,
-                $value->roll_out,
-                $value->dissemination,
+                $action->basic,
+                $action->roll_out,
+                $action->dissemination,
             ];
-        }
-        return [];
+        
     }
 
     public function headings(): array

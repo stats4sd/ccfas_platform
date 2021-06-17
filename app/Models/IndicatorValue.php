@@ -23,7 +23,7 @@ class IndicatorValue extends Model
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
-    protected $casts = ['disaggregation_id' => 'array', 'file_source' => 'array', 'disaggreation_names'=>'array' ];
+    protected $casts = ['disaggregation_id' => 'array', 'file_source' => 'array' ];
 
     /*
     |--------------------------------------------------------------------------
@@ -89,10 +89,4 @@ class IndicatorValue extends Model
 
         $this->uploadMultipleFilesToDiskFromRepeatable($value, $attribute_name, $disk, $destination_path);
     }
-
-    public function getDisaggregationNamesAttribuite()
-    {
-        
-        return $this->disaggregation->pluck('disaggregation_id');
-    } 
 }

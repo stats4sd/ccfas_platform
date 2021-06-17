@@ -42,7 +42,7 @@ class GeoBoundariesExport implements FromCollection, WithTitle, WithHeadings, Wi
     public function headings(): array
     {
         return [
-            'geo_boundary_id',
+            'id',
             'geo_boundary_name',
             'country_id',
             'country_name',

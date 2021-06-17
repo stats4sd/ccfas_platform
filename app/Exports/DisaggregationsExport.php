@@ -40,7 +40,7 @@ class DisaggregationsExport implements FromCollection,  WithTitle, WithHeadings,
     public function headings(): array
     {
         return [
-            'disaggregation_id',
+            'id',
             'disaggregation_name',
             'is_other',
         ];
